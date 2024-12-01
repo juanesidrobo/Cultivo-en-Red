@@ -3,13 +3,15 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button, VStack, Center } from "native-base";
 
-export default function AdminScreen({ navigation }) {
-  const tienda = require('../assets/tiendaLogin.png'); // Asegúrate de que la imagen exista
+const tienda = require('../assets/tiendaLogin.png'); 
+
+export default function AdminScreen({ navigation, route }) {// Asegúrate de que la imagen exista
+  const user = route.params?.user;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.bienvenido}>Bienvenido Administrador</Text>
+        <Text style={styles.bienvenido}>Bienvenido Administrador {user.rol} a</Text>
         <Text style={[styles.title, styles.greenText]}>CULTIVO en RED</Text>
         <Image source={tienda} style={styles.image} />
       </View>

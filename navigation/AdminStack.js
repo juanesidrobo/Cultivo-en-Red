@@ -9,14 +9,15 @@ import PublishEventsScreen from '../screens/admin/PublishEventsScreen';
 
 const Stack = createStackNavigator();
 
-export default function AdminStack() {
+export default function AdminStack({route}) {
+  const user = route.params?.user;
   return (
     <Stack.Navigator initialRouteName="Admin">
-      <Stack.Screen name="Admin" component={AdminScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="ManageUsers" component={ManageUsersScreen} />
-      <Stack.Screen name="ManageProducts" component={ManageProductsScreen} />
-      <Stack.Screen name="ManagePayments" component={ManagePaymentsScreen} />
-      <Stack.Screen name="PublishEvents" component={PublishEventsScreen} />
+      <Stack.Screen name="Admin" component={AdminScreen} options={{ headerShown: false }} initialParams={{ user }} />
+      <Stack.Screen name="ManageUsers" component={ManageUsersScreen} initialParams={{ user }}/>
+      <Stack.Screen name="ManageProducts" component={ManageProductsScreen} initialParams={{ user }} />
+      <Stack.Screen name="ManagePayments" component={ManagePaymentsScreen} initialParams={{ user }} />
+      <Stack.Screen name="PublishEvents" component={PublishEventsScreen} initialParams={{ user }} />
     </Stack.Navigator>
   );
 }

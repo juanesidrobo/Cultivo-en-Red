@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
+
+export default function HomeScreen({ navigation, route }) {
+  const userData = route.params?.user;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bienvenido a Cultivo en Red</Text>
+      <Text style={styles.title}>Bienvenido {userData.username} a Cultivo en Red</Text>
       <Button
         title="Ver Productos"
         onPress={() => navigation.navigate('Products')}

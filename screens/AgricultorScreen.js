@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Button } from "native-base";
-
-export default function AgricultorScreen({ navigation }) {
-  
+const tienda = require('../assets/tiendaLogin.png'); 
+export default function AgricultorScreen({ navigation, route }) {
+  const userData = route.params?.user;
   /* const handleLogin = () => {
     // Autenticación con Firebase o backend
     navigation.navigate('Home');
@@ -12,7 +12,7 @@ export default function AgricultorScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.bienvenido}>Bienvenido a</Text>
+        <Text style={styles.bienvenido}>Bienvenido {userData.username} a</Text>
         <Text style={[styles.title, styles.greenText]}>CULTIVO en RED</Text>
         <Image source={tienda} style={{ width: 239, height: 180 }} />
       </View>
