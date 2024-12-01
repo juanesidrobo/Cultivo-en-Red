@@ -10,7 +10,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleLogin = () => {
     // Autenticación con Firebase o backend
-    navigation.navigate('Home');
+    navigation.navigate('AdminStack');
   };
 
   return (
