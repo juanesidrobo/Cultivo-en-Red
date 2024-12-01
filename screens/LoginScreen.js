@@ -9,7 +9,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Autenticación con Firebase o backend
+
     navigation.navigate('Home');
   };
 
@@ -17,19 +17,19 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.bienvenido}>Bienvenido a</Text>
-        <Text style={[styles.title, styles.greenText]}>CULTIVO en RED</Text>
-        <Image source={tienda} style={{ width: 239, height: 180 }} />
+        <Text style={[styles.title, styles.greenText]}>CULTIVO EN RED</Text>
+        <Image source={tienda} style={{ width: 240, height: 180, marginHorizontal: 40}} />
       </View>
       <View style={styles.formContainer}>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <Text style={styles.normal}>Nombre</Text>
-        <TextInput style={styles.input} placeholder="Monica Camacho" />
+        <TextInput style={styles.input} placeholder=" " />
         <Text style={styles.normal}>Contraseña</Text>
-        <TextInput style={styles.input} placeholder="******" secureTextEntry />
+        <TextInput style={styles.input} placeholder=" " secureTextEntry />
         {/* <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Ingresar</Text>
         </TouchableOpacity> */}
-        <Button size="sm" variant="outline" onPress={handleLogin}>
+        <Button style={styles.button} size="sm" variant="outline" onPress={handleLogin}>
             <Text style={styles.footerText}>Ingresar</Text>
         </Button>
       </View>
@@ -58,16 +58,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
+    margin: 10,
+    marginBlockEnd: -10,
   },
   title: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#fff',
     margin: 10,
   },
   normal: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 15,
     color: '#fff',
   },
   greenText: {
@@ -77,6 +79,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#5ba73b',
+    borderTopStartRadius: 35,
+    borderTopEndRadius: 35,
   },
   input: {
     width: '80%',
@@ -87,16 +91,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 10,
     backgroundColor: '#c3dbb8',
-    marginBottom: 30,
+    marginBottom: 5,
   },
   button: {
-    backgroundColor: '#4CAF50',
-    width: '100%',
+    backgroundColor: '#5ba73b',
+    width: '30%',
     height: 50,
-    borderRadius: 5,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 30,
   },
   buttonText: {
     color: '#fff',
@@ -116,8 +120,9 @@ const styles = StyleSheet.create({
   },
   footerText: {
     marginHorizontal: 10,
+    fontSize: 12,
     fontWeight: 'bold',
     color: '#fff',
-    margin: 5,
+    margin: 2,
   },
 });
