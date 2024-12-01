@@ -1,10 +1,12 @@
+//App.js
 import React from 'react';
 import { NativeBaseProvider } from 'native-base'; // Importa NativeBaseProvider
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-
+import AgricultorScreen from './screens/AgricultorScreen';
+import AdminStack from './navigation/AdminStack';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -14,6 +16,8 @@ export default function App() {
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Agricultor" component={AgricultorScreen} />
+          <Stack.Screen name="AdminStack" component={AdminStack} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

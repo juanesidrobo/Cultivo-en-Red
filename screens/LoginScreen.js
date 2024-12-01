@@ -1,16 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Button } from "native-base";
+import axios from 'axios';
 
 const tienda = require('../assets/tiendaLogin.png');
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert('Error', 'Por favor ingresa todos los campos.');
+      return;
+    }
 
-    navigation.navigate('Home');
+    setLoading(true);
+
+    try {
+      const response = await axios.post('http://192.168.1.35:5000/api/auth/login', {
+        username,
+        password,
+      });
+      // Manejar la respuesta y redirigir a Home
+      const data = response.data; // Supongo que el backend envía los datos del usuario aquí
+      const user = data.user;
+      
+      console.log(user.username)
+      if(user.rol === "cliente"){
+        navigation.navigate('Home', { user });
+      }
+      else if(user.rol === "administrador"){
+        navigation.navigate('AdminStack', { user });
+      }
+      else if(user.rol === "agricultor"){
+        navigation.navigate('Agricultor', { user });
+      }
+      else{
+        Alert.alert('Error', 'Acceso no autorizado.');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Credenciales incorrectas o servidor no disponible.');
+    } finally {
+      setLoading(false);
+    }
+
   };
 
   return (
@@ -23,13 +59,13 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.formContainer}>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <Text style={styles.normal}>Nombre</Text>
-        <TextInput style={styles.input} placeholder=" " />
+        <TextInput style={styles.input} placeholder="Usuario" value={username} onChangeText={setUsername}/>
         <Text style={styles.normal}>Contraseña</Text>
-        <TextInput style={styles.input} placeholder=" " secureTextEntry />
+        <TextInput style={styles.input} placeholder="******" secureTextEntry value={password} onChangeText={setPassword}/>
         {/* <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Ingresar</Text>
         </TouchableOpacity> */}
-        <Button style={styles.button} size="sm" variant="outline" onPress={handleLogin}>
+        <Button size="sm" variant="outline" onPress={handleLogin} isLoading={loading} isLoadingText="Cargando">
             <Text style={styles.footerText}>Ingresar</Text>
         </Button>
       </View>
