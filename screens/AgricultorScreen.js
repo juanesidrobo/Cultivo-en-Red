@@ -8,15 +8,22 @@ export default function AgricultorScreen({ navigation, route }) {
     // Autenticación con Firebase o backend
     navigation.navigate('Home');
   }; */
+  const handleAddProduct = () => {
+    // Navega a la pantalla para añadir productos
+    navigation.navigate("AddProduct");
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.bienvenido}>Bienvenido {userData.username} a</Text>
-        <Text style={[styles.title, styles.greenText]}>CULTIVO en RED</Text>
-        <Image source={tienda} style={{ width: 239, height: 180 }} />
+        <Text style={styles.title}>CULTIVO en RED</Text>
+        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData.username}!</Text>
       </View>
-      
+
+      {/* Botón para añadir producto */}
+      <TouchableOpacity style={styles.addButton} onPress={handleAddProduct}>
+        <Text style={styles.addButtonText}>Añadir Producto</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -24,37 +31,37 @@ export default function AgricultorScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F9FAFB",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
-  bienvenido: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+  header: {
+    alignItems: "center",
+    marginBottom: 50,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-    margin: 10,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#4CAF50",
+    marginBottom: 10,
   },
-  greenText: {
-    color: '#4CAF50',
+  welcomeText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#4CAF50",
   },
-  button: {
-    backgroundColor: '#4CAF50',
-    width: '100%',
-    height: 50,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
+  addButton: {
+    backgroundColor: "transparent",
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
   },
-  buttonText: {
-    color: '#fff',
+  addButtonText: {
+    color: "#4CAF50",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
