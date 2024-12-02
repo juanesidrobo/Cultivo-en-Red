@@ -1,32 +1,73 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Button } from "native-base";
-const tienda = require('../assets/tiendaLogin.png'); 
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+
 export default function AgricultorScreen({ navigation, route }) {
-  const userData = route.params?.user;
-  /* const handleLogin = () => {
-    // Autenticación con Firebase o backend
-    navigation.navigate('Home');
-  }; */
+  const userData = route.params?.user; // Datos del agricultor
+  const [productos, setProductos] = useState([]); // Lista de productos
+  const [loading, setLoading] = useState(true); // Indicador de carga
+
+  // Función para obtener productos desde el backend
+  const fetchProductos = async () => {
+    try {
+      setLoading(true); // Inicia el indicador de carga
+      const response = await axios.get(`http://192.168.113.102:5000/api/producto?id_agricultor=${userData.id_agricultor}`);
+      setProductos(response.data); // Actualiza la lista de productos
+    } catch (error) {
+      console.error("Error al cargar productos:", error);
+    } finally {
+      setLoading(false); // Detiene el indicador de carga
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProductos();
+    }, []) // Ejecuta fetchProductos cuando la pantalla se enfoca
+  );
+
   const handleAddProduct = () => {
-    // Navega a la pantalla para añadir productos
-    navigation.navigate("AddProduct");
+    navigation.navigate("AddProduct", { user: userData });
+  };
+
+  const handleEditProduct = (product) => {
+    navigation.navigate("EditProduct", { user: userData, product });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>CULTIVO en RED</Text>
-        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData.username}!</Text>
+        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.username}!</Text>
       </View>
-
-      {/* Botón para añadir producto */}
+      {loading ? (
+        <ActivityIndicator size="large" color="#4CAF50" /> // Indicador mientras carga
+      ) : (
+        <View style={styles.productsContainer}>
+          {productos.length > 0 ? (
+            productos.map((product) => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => handleEditProduct(product)}
+              >
+                <Text style={styles.productName}>{product.nombre}</Text>
+                <Text style={styles.productPrice}>${product.precio}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noProducts}>No tienes productos registrados.</Text>
+          )}
+        </View>
+      )}
       <TouchableOpacity style={styles.addButton} onPress={handleAddProduct}>
         <Text style={styles.addButtonText}>Añadir Producto</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -63,5 +104,32 @@ const styles = StyleSheet.create({
     color: "#4CAF50",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  productsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  noProducts: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+  },
+  productCard: {
+    backgroundColor: "#fff",
+    padding: 20,
+    margin: 10,
+    borderRadius: 10,
+    width: 150,
+    alignItems: "center",
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#4CAF50",
+  },
+  productPrice: {
+    fontSize: 14,
+    color: "#4CAF50",
   },
 });

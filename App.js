@@ -7,6 +7,8 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import AgricultorScreen from './screens/AgricultorScreen';
 import AdminStack from './navigation/AdminStack';
+import AddProductScreen from './screens/AddProductScreen';
+import EditProductScreen from './screens/EditProductScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -18,6 +20,8 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Agricultor" component={AgricultorScreen} />
           <Stack.Screen name="AdminStack" component={AdminStack} options={{ headerShown: false }} />
+          <Stack.Screen name="AddProduct" component={AddProductScreen} />
+          <Stack.Screen name="EditProduct" component={EditProductScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>
