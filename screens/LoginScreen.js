@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://192.168.1.35:5000/api/auth/login', {
+      const response = await axios.post('http://192.168.113.102:5000/api/auth/login', {
         username,
         password,
       });
@@ -35,7 +35,24 @@ export default function LoginScreen({ navigation }) {
         navigation.navigate('AdminStack', { user });
       }
       else if(user.rol === "agricultor"){
-        navigation.navigate('Agricultor', { user });
+        const idA = user.id_agricultor;
+        try {
+          const response1 = await axios.get(`http://192.168.113.102:5000/api/producto?id_agricultor=${idA}`);
+          const data1 = response1.data;
+          console.log(data1);
+          navigation.navigate('Agricultor', { user, productos: data1 });
+          /* if (data1.length > 0) {
+            navigation.navigate('Agricultor', { user, productos: data1 });
+          } else {
+            Alert.alert('Error', 'No hay productos disponibles.');
+          } */
+        }
+        catch (error) {
+          console.error(error);
+          Alert.alert('Error', 'No hay agricultor disponibles.');
+        } finally {
+          setLoading(false);
+        }
       }
       else{
         Alert.alert('Error', 'Acceso no autorizado.');
