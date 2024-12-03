@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const anuncio = require('../assets/anucio-cliente.png');
 const verduras = require('../assets/verduras.png');
 const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
-
-export default function HomeScreen() {
+export default function HomeScreen({route, navigation}) {
+  const data2 = route.params?.data2;
+  //console.log(user);
+  console.log('Productos ' + data2);
+  const handleSearch = () => {
+    console.log('Buscar...');
+  }
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -29,10 +34,22 @@ export default function HomeScreen() {
           placeholderTextColor="#4CAF50" 
         />
         <TouchableOpacity style={styles.searchIcon}>
-          <Ionicons name="search" size={24} color="#4CAF50" />
+          <Ionicons name="search" size={24} color="#4CAF50" onPress={handleSearch}/>
         </TouchableOpacity>
       </View>
-
+      <FlatList
+        data={data2}
+        keyExtractor={(item) => item.codigo.toString()} // Asegúrate de que "codigo" sea único
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.nombre}</Text>
+            <Text>{item.descripcion || 'Sin descripción'}</Text>
+            <Text>
+              {item.precio ? `$${item.precio}` : 'Precio no disponible'}
+            </Text>
+          </View>
+        )}
+      />
       {/* Próximas Cosechas */}
       <View style={styles.section}>
         <Image

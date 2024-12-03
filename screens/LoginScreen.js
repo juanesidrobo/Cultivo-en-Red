@@ -2,22 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Button } from "native-base";
 import axios from 'axios';
-
 const tienda = require('../assets/tiendaLogin.png');
-
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Error', 'Por favor ingresa todos los campos.');
       return;
     }
-
     setLoading(true);
-
     try {
       const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/auth/login', {
         username,
@@ -29,7 +24,20 @@ export default function LoginScreen({ navigation }) {
       
       console.log(user.username)
       if(user.rol === "cliente"){
-        navigation.navigate('Home', { user });
+        try{
+          const response2 = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/all`);
+          const data2 = response2.data;
+          console.log(data2);
+          if (data2) {
+            navigation.navigate('Home', { data2 });
+          };
+        }
+        catch (error) {
+          console.error(error);
+          Alert.alert('Error', 'No hay productos disponibles.');
+        } finally {
+          setLoading(false);
+        }
       }
       else if(user.rol === "administrador"){
         navigation.navigate('AdminStack', { user });
