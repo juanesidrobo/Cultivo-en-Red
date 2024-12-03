@@ -15,7 +15,7 @@ export default function EditProductScreen({ route, navigation }) {
     setLoading(true);
     
     try {
-      const response = await axios.put(`http://192.168.113.102:5000/api/producto/${product.codigo}`, {
+      const response = await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}`, {
         id_agricultor: user.id_agricultor,
         nombre: productName,
         precio: parseFloat(price),
@@ -45,7 +45,7 @@ export default function EditProductScreen({ route, navigation }) {
           onPress: async () => {
             setLoading(true);
             try {
-              await axios.delete(`http://192.168.113.102:5000/api/producto/${product.codigo}?id_agricultor=${user.id_agricultor}`);
+              await axios.delete(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}?id_agricultor=${user.id_agricultor}`);
               Alert.alert("Producto Eliminado", "El producto ha sido eliminado correctamente.");
               navigation.goBack();
             } catch (error) {
