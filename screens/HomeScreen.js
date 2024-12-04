@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const anuncio = require('../assets/anucio-cliente.png');
@@ -9,28 +9,56 @@ const frutas = require('../assets/frutas-cliente.png');
 
 export default function HomeScreen({ route, navigation }) {
   const [cart, setCart] = useState([]); // Estado para manejar el carrito
+  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
+  const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
+  const [modalVisible, setModalVisible] = useState(false); // Estado del modal
   const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
 
-  // Agregar un producto al carrito basado en su código único
-  const handleAddToCart = (item) => {
+  // Manejar la apertura del modal con los detalles del producto
+  const handleShowProductDetails = (item) => {
+    setSelectedProduct(item); // Guardar el producto seleccionado
+    setQuantity(1); // Restablecer la cantidad inicial
+    setModalVisible(true); // Mostrar el modal
+  };
+
+  // Confirmar y agregar el producto al carrito
+  const handleAddToCart = () => {
+    if (!selectedProduct) return;
+
     setCart((prevCart) => {
       // Verificar si el producto ya está en el carrito
-      const exists = prevCart.some((cartItem) => cartItem.codigo === item.codigo);
+      const exists = prevCart.some((cartItem) => cartItem.codigo === selectedProduct.codigo);
 
       if (exists) {
-        Alert.alert('Producto duplicado', `${item.producto_nombre} ya está en el carrito.`);
+        Alert.alert('Producto duplicado', `${selectedProduct.producto_nombre} ya está en el carrito.`);
         return prevCart; // No se agrega si ya existe
-      }
+      }      
 
-      // Si no existe, lo agrega al carrito
-      Alert.alert('Producto añadido', `${item.producto_nombre} se añadió al carrito.`);
-      return [...prevCart, item];
+      // Si no existe, lo agrega al carrito con la cantidad seleccionada
+      const productWithQuantity = { ...selectedProduct, cantidad: quantity };
+      Alert.alert('Producto añadido', `${selectedProduct.producto_nombre} se añadió al carrito con cantidad: ${quantity}.`);
+      return [...prevCart, productWithQuantity];
     });
+    setModalVisible(false); // Cerrar el modal
   };
 
   // Navegar a la pantalla del carrito
   const handleGoToCart = () => {
     navigation.navigate('CartScreen', { cart }); // Pasar los datos del carrito a la pantalla CartScreen
+  };
+
+  // Incrementar la cantidad seleccionada
+  const increaseQuantity = () => {
+    if (quantity < selectedProduct.cantidadDisponible) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  // Decrementar la cantidad seleccionada
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
   };
 
   const renderHeader = () => (
@@ -98,41 +126,82 @@ export default function HomeScreen({ route, navigation }) {
   );
 
   return (
-    <FlatList
-      data={data2}
-      keyExtractor={(item) => item.codigo.toString()}
-      ListHeaderComponent={renderHeader}
-      renderItem={({ item }) => (
-        <View style={styles.productCard}>
-          <View style={styles.productHeader}>
-            <Text style={styles.productTitle}>{item.producto_nombre}</Text>
-            <TouchableOpacity onPress={() => handleAddToCart(item)}>
-              <Ionicons name="cart" size={20} color="#4CAF50" style={styles.cartIcon} />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.productSubtitle}>
-            {item.agricultor_nombre || 'Desconocido'}
-          </Text>
-          <View style={styles.locationContainer}>
-            <Ionicons name="location-outline" size={16} color="#4CAF50" style={styles.locationIcon} />
-            <Text style={styles.productLocation}>
-              {item.direccion || 'No especificada'}
+    <>
+      <FlatList
+        data={data2}
+        keyExtractor={(item) => item.codigo.toString()}
+        ListHeaderComponent={renderHeader}
+        renderItem={({ item }) => (
+          <View style={styles.productCard}>
+            <View style={styles.productHeader}>
+              <Text style={styles.productTitle}>{item.producto_nombre}</Text>
+              <TouchableOpacity onPress={() => handleShowProductDetails(item)}>
+                <Ionicons name="cart" size={20} color="#4CAF50" style={styles.cartIcon} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.productSubtitle}>
+              {item.agricultor_nombre || 'Desconocido'}
             </Text>
+            <View style={styles.locationContainer}>
+              <Ionicons name="location-outline" size={16} color="#4CAF50" style={styles.locationIcon} />
+              <Text style={styles.productLocation}>
+                {item.direccion || 'No especificada'}
+              </Text>
+            </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceText}>${item.precio || '0'}</Text>
+            </View>
           </View>
-          <View style={styles.priceContainer}>
-            <Text style={styles.priceText}>${item.precio || '0'}</Text>
+        )}
+        contentContainerStyle={styles.productsContainer}
+        ListEmptyComponent={
+          <Text style={styles.noProducts}>No hay productos disponibles.</Text>
+        }
+      />
+
+      {/* Modal para agregar al carrito */}
+      {selectedProduct && (
+        <Modal visible={modalVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <ScrollView contentContainerStyle={styles.modalContent}>
+              <Text style={styles.modalTitle}>{selectedProduct.producto_nombre}</Text>
+              <Text style={styles.modalText}>Descripción: {selectedProduct.descripcion}</Text>
+              <Text style={styles.modalText}>Agricultor: {selectedProduct.agricultor_nombre}</Text>
+              <Text style={styles.modalText}>Ubicación: {selectedProduct.direccion}</Text>
+
+              <View style={styles.quantityContainer}>
+                <TouchableOpacity onPress={decreaseQuantity}>
+                  <Ionicons name="remove-circle-outline" size={24} color="#4CAF50" />
+                </TouchableOpacity>
+                <Text style={styles.quantityText}>{quantity}</Text>
+                <TouchableOpacity onPress={increaseQuantity}>
+                  <Ionicons name="add-circle-outline" size={24} color="#4CAF50" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.priceText}>Precio Kilo: ${selectedProduct.precio}</Text>
+
+              <Text style={styles.modalSubtitle}>Reseñas:</Text>
+              <View style={styles.reviewsContainer}>
+                <Text>Añade reseñas aquí</Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.addToCartButton}
+                onPress={handleAddToCart}
+              >
+                <Text style={styles.addToCartText}>Agregar al carrito</Text>
+              </TouchableOpacity>
+            </ScrollView>
           </View>
-        </View>
+        </Modal>
       )}
-      contentContainerStyle={styles.productsContainer}
-      ListEmptyComponent={
-        <Text style={styles.noProducts}>No hay productos disponibles.</Text>
-      }
-    />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  // ... estilos existentes
   container: {
     flex: 1,
     backgroundColor: '#f4f6ff',
@@ -303,5 +372,56 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: 20,
   },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20, // Bordes redondeados en la parte superior
+    borderTopRightRadius: 20,
+    padding: 20,
+    width: '100%', // Asegura que ocupe todo el ancho
+    height: '50%', // Ajusta la altura del modal para que esté bien alineado
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  quantityText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 20,
+  },
+  addToCartButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  addToCartText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  reviewsContainer: {
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#f4f4f4',
+  },
 });
-
