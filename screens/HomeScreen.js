@@ -1,55 +1,46 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const anuncio = require('../assets/anucio-cliente.png');
 const verduras = require('../assets/verduras.png');
 const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
-export default function HomeScreen({route, navigation}) {
-  const data2 = route.params?.data2;
-  //console.log(user);
-  console.log('Productos ' + data2);
+
+export default function HomeScreen({ route, navigation }) {
+  const data2 = route.params?.data2; // Datos obtenidos del backend
+
   const handleSearch = () => {
     console.log('Buscar...');
-  }
-  return (
-    <ScrollView style={styles.container}>
+  };
+
+  const renderHeader = () => (
+    <View>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingHorizontal: 40 }]}>
         <TouchableOpacity style={styles.menuButton}>
           <Ionicons name="menu" size={24} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.title}>CULTIVO en RED</Text>
         <TouchableOpacity style={styles.cartButton}>
-          <Ionicons name="cart-outline" size={24} color="#fff" style={styles.cartIcon} />
+          <Ionicons name="cart-outline" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
 
+
+
       {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Buscar..." 
-          placeholderTextColor="#4CAF50" 
+      <View style={[styles.searchContainer, { marginHorizontal: 40 }]}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar..."
+          placeholderTextColor="#4CAF50"
         />
         <TouchableOpacity style={styles.searchIcon}>
-          <Ionicons name="search" size={24} color="#4CAF50" onPress={handleSearch}/>
+          <Ionicons name="search" size={24} color="#4CAF50" onPress={handleSearch} />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={data2}
-        keyExtractor={(item) => item.codigo.toString()} // Asegúrate de que "codigo" sea único
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.nombre}</Text>
-            <Text>{item.descripcion || 'Sin descripción'}</Text>
-            <Text>
-              {item.precio ? `$${item.precio}` : 'Precio no disponible'}
-            </Text>
-          </View>
-        )}
-      />
+
       {/* Próximas Cosechas */}
       <View style={styles.section}>
         <Image
@@ -63,76 +54,86 @@ export default function HomeScreen({route, navigation}) {
         <Text style={styles.sectionTitle}>Categorías</Text>
         <View style={styles.categoryList}>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={frutas} // Imagen local de frutas
-              style={styles.categoryImage} 
-            />
+            <Image source={frutas} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Frutas</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={verduras} // Imagen local de verduras
-              style={styles.categoryImage} 
-            />
+            <Image source={verduras} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Verduras</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={plantas} // Imagen local de plantas
-              style={styles.categoryImage} 
-            />
+            <Image source={plantas} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Plantas</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Productos */}
-      <View style={styles.products}>
-        <View style={styles.productCard}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/100' }} 
-            style={styles.productImage} 
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>Banano Maduro</Text>
-            <Text style={styles.productSubtitle}>Wilson Manduley</Text>
-            <Text style={styles.productLocation}>Vendido en El Tunal, Popayán</Text>
-          </View>
-        </View>
-        <View style={styles.productCard}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/100' }} 
-            style={styles.productImage} 
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>Tomate Chonto</Text>
-            <Text style={styles.productSubtitle}>Catalina Ceballos</Text>
-            <Text style={styles.productLocation}>Tiendas, Cauca</Text>
-          </View>
-        </View>
+      {/* Título de productos */}
+      <View style={styles.productsSection}>
+        <Text style={styles.sectionTitle}>Productos Disponibles</Text>
       </View>
-    </ScrollView>
+    </View>
+  );
+
+  return (
+    <FlatList
+      data={data2}
+      keyExtractor={(item) => item.codigo.toString()} // Usa "codigo" como clave única
+      ListHeaderComponent={renderHeader}
+      renderItem={({ item }) => (
+        <View style={styles.productCard}>
+          <View style={styles.productHeader}>
+            <Text style={styles.productTitle}>{item.producto_nombre}</Text>
+            <TouchableOpacity onPress={() => console.log(`Seleccionado: ${item.producto_nombre}`)}>
+              <Ionicons name="cart" size={20} color="#4CAF50" style={styles.cartIcon} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.productSubtitle}>
+            {item.agricultor_nombre || 'Desconocido'}
+          </Text>
+          <View style={styles.locationContainer}>
+            <Ionicons name="location-outline" size={16} color="#4CAF50" style={styles.locationIcon} />
+            <Text style={styles.productLocation}>
+              {item.direccion || 'No especificada'}
+            </Text>
+          </View>
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceText}>${item.precio || '0'}</Text>
+          </View>
+        </View>
+      )}
+      contentContainerStyle={styles.productsContainer}
+      ListEmptyComponent={
+        <Text style={styles.noProducts}>No hay productos disponibles.</Text>
+      }
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f4f6ff', // Fondo modificado
+    backgroundColor: '#f4f6ff',
   },
   header: {
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    elevation: 2, // Agrega una ligera sombra
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#4CAF50',
     textAlign: 'center',
-    flex: 1, // Esto permite que el título tome todo el espacio disponible entre los botones
+    flex: 1,
   },
   menuButton: {
     padding: 10,
@@ -141,9 +142,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     backgroundColor: '#4CAF50',
-  },
-  cartIcon: {
-    color: '#fff',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -183,56 +181,88 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     alignItems: 'center',
-    backgroundColor: '#fff', // Fondo blanco para los botones
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
-    width: 90, // Ancho del botón
-    height: 110, // Altura del botón
-    elevation: 3, // Sombra para dar efecto de recuadro
+    width: 90,
+    height: 110,
+    elevation: 3,
   },
   categoryImage: {
     width: 50,
     height: 50,
-    borderRadius: 25, // Hace las imágenes circulares
+    borderRadius: 25,
     marginBottom: 5,
   },
   categoryText: {
     fontSize: 14,
     color: '#333',
   },
-  products: {
+  productsSection: {
     paddingHorizontal: 20,
     marginTop: 20,
   },
+  productsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   productCard: {
-    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
+    padding: 15,
+    marginBottom: 15,
+    width: '95%',
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
-  productImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
-  productInfo: {
-    marginLeft: 10,
-    flex: 1,
-    justifyContent: 'center',
+  productHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
   },
   productTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#4CAF50',
   },
   productSubtitle: {
     fontSize: 14,
     color: '#555',
+    marginBottom: 5,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationIcon: {
+    marginRight: 5,
   },
   productLocation: {
     fontSize: 12,
     color: '#888',
+  },
+  cartIcon: {
+    padding: 5,
+    borderRadius: 20,
+    backgroundColor: '#f4f6ff',
+  },
+  priceContainer: {
+    marginTop: 5,
+    alignItems: 'flex-end',
+  },
+  priceText: {
+    fontSize: 16, // Aumenta el tamaño de la fuente
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  noProducts: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+    marginTop: 20,
   },
 });
