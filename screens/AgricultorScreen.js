@@ -39,7 +39,7 @@ export default function AgricultorScreen({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>CULTIVO en RED</Text>
-        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.username}!</Text>
+        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.nombre}!</Text>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#4CAF50" /> // Indicador mientras carga

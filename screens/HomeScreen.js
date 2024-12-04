@@ -44,6 +44,7 @@ export default function HomeScreen({route, navigation}) {
           <View>
             <Text>{item.nombre}</Text>
             <Text>{item.descripcion || 'Sin descripción'}</Text>
+            <Text>{item.codigo}</Text>
             <Text>
               {item.precio ? `$${item.precio}` : 'Precio no disponible'}
             </Text>
