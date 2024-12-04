@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const anuncio = require('../assets/anucio-cliente.png');
@@ -8,10 +8,29 @@ const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
 
 export default function HomeScreen({ route, navigation }) {
-  const data2 = route.params?.data2; // Datos obtenidos del backend
+  const [cart, setCart] = useState([]); // Estado para manejar el carrito
+  const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
 
-  const handleSearch = () => {
-    console.log('Buscar...');
+  // Agregar un producto al carrito basado en su código único
+  const handleAddToCart = (item) => {
+    setCart((prevCart) => {
+      // Verificar si el producto ya está en el carrito
+      const exists = prevCart.some((cartItem) => cartItem.codigo === item.codigo);
+
+      if (exists) {
+        Alert.alert('Producto duplicado', `${item.producto_nombre} ya está en el carrito.`);
+        return prevCart; // No se agrega si ya existe
+      }
+
+      // Si no existe, lo agrega al carrito
+      Alert.alert('Producto añadido', `${item.producto_nombre} se añadió al carrito.`);
+      return [...prevCart, item];
+    });
+  };
+
+  // Navegar a la pantalla del carrito
+  const handleGoToCart = () => {
+    navigation.navigate('CartScreen', { cart }); // Pasar los datos del carrito a la pantalla CartScreen
   };
 
   const renderHeader = () => (
@@ -22,12 +41,15 @@ export default function HomeScreen({ route, navigation }) {
           <Ionicons name="menu" size={24} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.title}>CULTIVO en RED</Text>
-        <TouchableOpacity style={styles.cartButton}>
+        <TouchableOpacity style={styles.cartButton} onPress={handleGoToCart}>
           <Ionicons name="cart-outline" size={24} color="#fff" />
+          {cart.length > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cart.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
-
-
 
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { marginHorizontal: 40 }]}>
@@ -37,14 +59,14 @@ export default function HomeScreen({ route, navigation }) {
           placeholderTextColor="#4CAF50"
         />
         <TouchableOpacity style={styles.searchIcon}>
-          <Ionicons name="search" size={24} color="#4CAF50" onPress={handleSearch} />
+          <Ionicons name="search" size={24} color="#4CAF50" />
         </TouchableOpacity>
       </View>
 
       {/* Próximas Cosechas */}
       <View style={styles.section}>
         <Image
-          source={anuncio} // Uso de la constante anuncio para cargar la imagen
+          source={anuncio}
           style={{ width: 300, height: 139, marginHorizontal: 40 }}
         />
       </View>
@@ -78,13 +100,13 @@ export default function HomeScreen({ route, navigation }) {
   return (
     <FlatList
       data={data2}
-      keyExtractor={(item) => item.codigo.toString()} // Usa "codigo" como clave única
+      keyExtractor={(item) => item.codigo.toString()}
       ListHeaderComponent={renderHeader}
       renderItem={({ item }) => (
         <View style={styles.productCard}>
           <View style={styles.productHeader}>
             <Text style={styles.productTitle}>{item.producto_nombre}</Text>
-            <TouchableOpacity onPress={() => console.log(`Seleccionado: ${item.producto_nombre}`)}>
+            <TouchableOpacity onPress={() => handleAddToCart(item)}>
               <Ionicons name="cart" size={20} color="#4CAF50" style={styles.cartIcon} />
             </TouchableOpacity>
           </View>
@@ -142,6 +164,22 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     backgroundColor: '#4CAF50',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -266,3 +304,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
