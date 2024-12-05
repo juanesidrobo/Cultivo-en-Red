@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
       else if(user.rol === "agricultor"){ 
         const idA = user.id_agricultor;
         try {
-          const response1 = await axios.get(`http://192.168.0.17:5000/api/producto?id_agricultor=${idA}`);
+          const response1 = await axios.get(`http://192.168.0.17:500/api/producto?id_agricultor=${idA}`);
           const data1 = response1.data;
           console.log(data1);
           navigation.navigate('Agricultor', { user, productos: data1 });
