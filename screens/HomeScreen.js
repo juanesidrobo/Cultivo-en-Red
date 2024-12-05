@@ -58,7 +58,11 @@ export default function HomeScreen({route, navigation}) {
           style={{ width: 300, height: 139, marginHorizontal: 40 }}
         />
       </View>
-
+      <TouchableOpacity
+        onPress={() => navigation.navigate('EnviosCliente')}
+      >
+        <Text>Envio Cliente</Text>
+      </TouchableOpacity>
       {/* Categorías */}
       <View style={styles.categories}>
         <Text style={styles.sectionTitle}>Categorías</Text>

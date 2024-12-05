@@ -9,6 +9,7 @@ import AgricultorScreen from './screens/AgricultorScreen';
 import AdminStack from './navigation/AdminStack';
 import AddProductScreen from './screens/AddProductScreen';
 import EditProductScreen from './screens/EditProductScreen';
+import EnviosClienteScreen from './screens/EnviosClienteScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
           <Stack.Screen name="AdminStack" component={AdminStack} options={{ headerShown: false }} />
           <Stack.Screen name="AddProduct" component={AddProductScreen} />
           <Stack.Screen name="EditProduct" component={EditProductScreen} />
+          <Stack.Screen name="EnviosCliente" component={EnviosClienteScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NativeBaseProvider>

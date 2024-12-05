@@ -10,7 +10,6 @@ const AddProductScreen = ({navigation, route}) => {
   const [description, setDescription] = useState('Banano de excelente calidad');
   const [loading, setLoading] = useState(false);
 
-
   const handleAddProduct = async () => {
     const userData = route.params?.user;
     console.log('userData:', userData);
@@ -24,7 +23,7 @@ const AddProductScreen = ({navigation, route}) => {
     });
     setLoading(true);
     try{
-        const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto', {
+        const response = await axios.post('http://192.168.18.56:5000/api/producto', {
             id_agricultor: userData.id_agricultor,
             nombre: productName,
             precio: price,
