@@ -13,7 +13,7 @@ const imagenes = [
   ];
 
 
-  const EnviosClienteScreen = () => {
+  const EnviosClienteScreen = ({navigation}) => {
 
     const [imagenSeleccionada] = useState(
         imagenes[Math.floor(Math.random() * imagenes.length)]
@@ -108,6 +108,8 @@ const imagenes = [
 
   const marcarPedidoEntregado = () => {
     actualizarEstado(3); 
+    navigation.navigate('Login');
+    
   };
 
 

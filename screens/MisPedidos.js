@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-const MisPedidosScreen = ({ navigation }) => {
+const MisPedidosScreen = ({ navigation, route }) => {
+  const { total } = route.params; // Recibe el total enviado desde la pantalla anterior
   const facturas = [
     { id: '1', titulo: 'Factura 1', monto: '$40.000' },
     { id: '2', titulo: 'Factura 2', monto: '$30.000' },
   ];
-
+  console.log(total);
   const renderFactura = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.facturaInfo}>
         <Text style={styles.facturaTitulo}>{item.titulo}</Text>
-        <Text style={styles.facturaMonto}>{item.monto}</Text>
+        <Text style={styles.facturaMonto}>$ {total}</Text>
       </View>
       <TouchableOpacity
         style={styles.detallesButton}

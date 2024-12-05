@@ -89,11 +89,11 @@ export default function CartScreen({ route, navigation }) {
 
         // Enviar la solicitud al backend
         await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}`, productData);
-        navigation.navigate('Payment', { total: calculateTotalPrice() });
+        
       }
 
       Alert.alert("Pedido Procesado", "Las cantidades disponibles se han actualizado correctamente.");
-      navigation.goBack(); // Volver a la pantalla anterior después de procesar el pedido
+      navigation.navigate('Payment', { total: calculateTotalPrice() });
     } catch (error) {
       console.error('Error al procesar el pedido:', error.response?.data || error.message);
       Alert.alert("Error", "Hubo un problema al procesar el pedido.");

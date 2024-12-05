@@ -25,11 +25,11 @@ export default function PaymentScreen({ route, navigation }) {
       [
         {
           text: 'Aceptar',
-          onPress: () => navigation.goBack(), // Regresa a la pantalla anterior
+          onPress: () => navigation.navigate('MisPedidos', {total}), // Navega a la pantalla Home
         },
       ]
     );
-    
+     
   };
 
   return (
