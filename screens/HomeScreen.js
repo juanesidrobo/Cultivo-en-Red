@@ -9,21 +9,20 @@ const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
 
 export default function HomeScreen({ route, navigation }) {
-  const [cart, setCart] = useState([]); // Estado para manejar el carrito
-  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
-  const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
-  const [modalVisible, setModalVisible] = useState(false); // Estado del modal
-  const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
-  const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
+  const [cart, setCart] = useState([]); 
+  const [selectedProduct, setSelectedProduct] = useState(null); 
+  const [quantity, setQuantity] = useState(1); 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [reseña, setReseña] = useState(null);
+  const data2 = route.params?.data2 || []; 
 
-  // Manejar la apertura del modal con los detalles del producto
+ 
   const handleShowProductDetails = async(item) => {
-    setSelectedProduct(item); // Guardar el producto seleccionado
-    setQuantity(1); // Restablecer la cantidad inicial
-    setModalVisible(true); // Mostrar el modal
-    // Obtener una reseña aleatoria para el producto
+    setSelectedProduct(item); 
+    setQuantity(1); 
+    setModalVisible(true); 
     try {
-      const response = await axios.get(`http://192.168.80.20:5000/api/resenas/${item.codigo}`);
+      const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas/${item.codigo}`);
       const reseñas = response.data.resenas;
       if (reseñas.length > 0) {
         setReseña(reseñas[Math.floor(Math.random() * reseñas.length)]);
@@ -36,40 +35,40 @@ export default function HomeScreen({ route, navigation }) {
     }
   };
 
-  // Confirmar y agregar el producto al carrito
+
   const handleAddToCart = () => {
     if (!selectedProduct) return;
 
     setCart((prevCart) => {
-      // Verificar si el producto ya está en el carrito
+      
       const exists = prevCart.some((cartItem) => cartItem.codigo === selectedProduct.codigo);
 
       if (exists) {
         Alert.alert('Producto duplicado', `${selectedProduct.producto_nombre} ya está en el carrito.`);
-        return prevCart; // No se agrega si ya existe
+        return prevCart; 
       }      
 
-      // Si no existe, lo agrega al carrito con la cantidad seleccionada
+     
       const productWithQuantity = { ...selectedProduct, cantidad: quantity };
       Alert.alert('Producto añadido', `${selectedProduct.producto_nombre} se añadió al carrito con cantidad: ${quantity}.`);
       return [...prevCart, productWithQuantity];
     });
-    setModalVisible(false); // Cerrar el modal
+    setModalVisible(false); 
   };
 
-  // Navegar a la pantalla del carrito
+
   const handleGoToCart = () => {
-    navigation.navigate('CartScreen', { cart }); // Pasar los datos del carrito a la pantalla CartScreen
+    navigation.navigate('CartScreen', { cart }); 
   };
 
-  // Incrementar la cantidad seleccionada
+
   const increaseQuantity = () => {
     if (quantity < selectedProduct.cantidadDisponible) {
       setQuantity(quantity + 1);
     }
   };
 
-  // Decrementar la cantidad seleccionada
+
   const decreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
@@ -94,7 +93,7 @@ export default function HomeScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate('EnviosCliente')}>
+        onPress={() => navigation.navigate('MisPedidos')}>
         <Text>Envio Cliente</Text>
       </TouchableOpacity>
       {/* Barra de búsqueda */}
@@ -116,11 +115,6 @@ export default function HomeScreen({ route, navigation }) {
           style={{ width: 300, height: 139, marginHorizontal: 40 }}
         />
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('EnviosCliente')}
-      >
-        <Text>Envio Cliente</Text>
-      </TouchableOpacity>
       {/* Categorías */}
       <View style={styles.categories}>
         <Text style={styles.sectionTitle}>Categorías</Text>
@@ -234,7 +228,6 @@ export default function HomeScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // ... estilos existentes
   container: {
     flex: 1,
     backgroundColor: '#f4f6ff',
@@ -246,7 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 2, // Agrega una ligera sombra
+    elevation: 2, 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -318,6 +311,7 @@ const styles = StyleSheet.create({
   categoryList: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 20,
   },
   categoryButton: {
     alignItems: 'center',
@@ -395,7 +389,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   priceText: {
-    fontSize: 16, // Aumenta el tamaño de la fuente
+    fontSize: 16, 
     fontWeight: 'bold',
     color: '#4CAF50',
   },
@@ -413,11 +407,11 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    borderTopLeftRadius: 20, // Bordes redondeados en la parte superior
+    borderTopLeftRadius: 20, 
     borderTopRightRadius: 20,
     padding: 20,
-    width: '100%', // Asegura que ocupe todo el ancho
-    height: '50%', // Ajusta la altura del modal para que esté bien alineado
+    width: '100%', 
+    height: '50%', 
   },
   modalTitle: {
     fontSize: 22,
