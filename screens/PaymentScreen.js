@@ -29,6 +29,7 @@ export default function PaymentScreen({ route, navigation }) {
         },
       ]
     );
+    
   };
 
   return (

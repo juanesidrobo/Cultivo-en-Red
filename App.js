@@ -11,6 +11,7 @@ import AddProductScreen from './screens/AddProductScreen';
 import EditProductScreen from './screens/EditProductScreen';
 import CartScreen from './screens/CartScreen';
 import ReviewScreen from './screens/ReviewScreen'; // Importa ReviewScreen
+import PaymentScreen from './screens/PaymentScreen';
 
 import CreateReviewScreen from './screens/CreateReviewScreen'; // Importa ReviewScreen
 const Stack = createStackNavigator();
@@ -27,6 +28,7 @@ export default function App() {
           <Stack.Screen name="AdminStack" component={AdminStack} options={{ headerShown: false }} />
           <Stack.Screen name="AddProduct" component={AddProductScreen} />
           <Stack.Screen name="EditProduct" component={EditProductScreen} />
+          <Stack.Screen name="Payment" component={PaymentScreen} />
           <Stack.Screen name="ReviewScreen" component={ReviewScreen} options={{ title: 'Reseñas' }} /> 
           <Stack.Screen name="CreateReviewScreen" component={CreateReviewScreen} options={{ title: 'Crear Reseñas' }} />
         </Stack.Navigator>

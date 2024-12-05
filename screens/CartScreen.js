@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Alert,} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
@@ -95,8 +88,8 @@ export default function CartScreen({ route, navigation }) {
         updatedProducts.push({ codigo: product.codigo, ...productData });
 
         // Enviar la solicitud al backend
-        await axios.put(`http://192.168.0.17:5000/api/producto/${product.codigo}`, productData);
-
+        await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}`, productData);
+        navigation.navigate('Payment', { total: calculateTotalPrice() });
       }
 
       Alert.alert("Pedido Procesado", "Las cantidades disponibles se han actualizado correctamente.");
