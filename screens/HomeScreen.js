@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 
 const anuncio = require('../assets/anucio-cliente.png');
 const verduras = require('../assets/verduras.png');
@@ -12,13 +13,27 @@ export default function HomeScreen({ route, navigation }) {
   const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
   const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
   const [modalVisible, setModalVisible] = useState(false); // Estado del modal
+  const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
   const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
 
   // Manejar la apertura del modal con los detalles del producto
-  const handleShowProductDetails = (item) => {
+  const handleShowProductDetails = async(item) => {
     setSelectedProduct(item); // Guardar el producto seleccionado
     setQuantity(1); // Restablecer la cantidad inicial
     setModalVisible(true); // Mostrar el modal
+    // Obtener una reseña aleatoria para el producto
+    try {
+      const response = await axios.get(`http://192.168.80.20:5000/api/resenas/${item.codigo}`);
+      const reseñas = response.data.resenas;
+      if (reseñas.length > 0) {
+        setReseña(reseñas[Math.floor(Math.random() * reseñas.length)]);
+      } else {
+        setReseña(null);
+      }
+    } catch (error) {
+      console.error('Error al obtener la reseña:', error);
+      setReseña(null);
+    }
   };
 
   // Confirmar y agregar el producto al carrito
@@ -181,10 +196,21 @@ export default function HomeScreen({ route, navigation }) {
 
               <Text style={styles.priceText}>Precio Kilo: ${selectedProduct.precio}</Text>
 
-              <Text style={styles.modalSubtitle}>Reseñas:</Text>
-              <View style={styles.reviewsContainer}>
-                <Text>Añade reseñas aquí</Text>
-              </View>
+               {/* Mostrar la reseña */}
+               {reseña ? (
+                <View style={styles.reviewCard}>
+                  <Text style={styles.reviewTitle}>Reseñas:</Text>
+                  <Text style={styles.clientName}>{reseña.cliente}</Text>
+                  <Text style={styles.comment}>{reseña.comentario}</Text>
+                  <Text style={styles.stars}>{'★'.repeat(reseña.numero_estrellas)}</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('ReviewScreen', { codigo_producto: selectedProduct.codigo })}>
+                    <Ionicons name="arrow-forward-circle" size={30} color="#4CAF50" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text>No hay reseñas para este producto.</Text>
+              )}
+
 
               <TouchableOpacity
                 style={styles.addToCartButton}
@@ -423,5 +449,55 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     backgroundColor: '#f4f4f4',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '90%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginBottom: 10,
+  },
+  reviewCard: {
+    backgroundColor: '#5ba73b',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  clientName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  comment: {
+    fontSize: 14,
+    color: '#fff',
+    marginVertical: 5,
+  },
+  stars: {
+    fontSize: 16,
+    color: '#FFD700',
+  },
+  addToCartButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  addToCartText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
