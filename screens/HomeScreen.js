@@ -1,4 +1,4 @@
-import React, { useState,useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
@@ -9,21 +9,22 @@ const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
 
 export default function HomeScreen({ route, navigation }) {
-  const [cart, setCart] = useState([]); // Estado para manejar el carrito
-  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
-  const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
-  const [modalVisible, setModalVisible] = useState(false); // Estado del modal
-  const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
-  const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
+  const [cart, setCart] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [reseña, setReseña] = useState(null);
 
-  // Manejar la apertura del modal con los detalles del producto
-  const handleShowProductDetails = async(item) => {
-    setSelectedProduct(item); // Guardar el producto seleccionado
-    setQuantity(1); // Restablecer la cantidad inicial
-    setModalVisible(true); // Mostrar el modal
-    // Obtener una reseña aleatoria para el producto
+  const [searchText, setSearchText] = useState('');
+  const [data, setData] = useState(route.params?.data2 || []);
+
+  // Función para mostrar detalles del producto y obtener reseñas
+  const handleShowProductDetails = async (item) => {
+    setSelectedProduct(item);
+    setQuantity(1);
+    setModalVisible(true);
     try {
-      const response = await axios.get(`http://192.168.80.20:5000/api/resenas/${item.codigo}`);
+      const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas/${item.codigo}`);
       const reseñas = response.data.resenas;
       if (reseñas.length > 0) {
         setReseña(reseñas[Math.floor(Math.random() * reseñas.length)]);
@@ -36,6 +37,30 @@ export default function HomeScreen({ route, navigation }) {
     }
   };
 
+  // Función para manejar la búsqueda
+  const handleSearch = async () => {
+    if (searchText.trim() === '') {
+      setData(route.params?.data2 || []);
+      return;
+    }
+    try {
+      const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/search?nombre=${encodeURIComponent(searchText)}`);
+      const searchResults = response.data;
+      setData(searchResults);
+    } catch (error) {
+      console.error('Error al realizar la búsqueda:', error);
+      Alert.alert('Error', 'No se pudo realizar la búsqueda.');
+    }
+  };
+
+  // Efecto para restaurar los datos originales cuando el texto de búsqueda está vacío
+  useEffect(() => {
+    if (searchText.trim() === '') {
+      setData(route.params?.data2 || []);
+    }
+  }, [searchText]);
+
+  // Resto de funciones (handleAddToCart, handleGoToCart, etc.)
   // Confirmar y agregar el producto al carrito
   const handleAddToCart = () => {
     if (!selectedProduct) return;
@@ -76,6 +101,8 @@ export default function HomeScreen({ route, navigation }) {
     }
   };
 
+  // ...
+
   const renderHeader = () => (
     <View>
       {/* Header */}
@@ -100,8 +127,10 @@ export default function HomeScreen({ route, navigation }) {
           style={styles.searchInput}
           placeholder="Buscar..."
           placeholderTextColor="#4CAF50"
+          value={searchText}
+          onChangeText={(text) => setSearchText(text)}
         />
-        <TouchableOpacity style={styles.searchIcon}>
+        <TouchableOpacity style={styles.searchIcon} onPress={handleSearch}>
           <Ionicons name="search" size={24} color="#4CAF50" />
         </TouchableOpacity>
       </View>
@@ -147,7 +176,7 @@ export default function HomeScreen({ route, navigation }) {
   return (
     <>
       <FlatList
-        data={data2}
+        data={data}
         keyExtractor={(item) => item.codigo.toString()}
         ListHeaderComponent={renderHeader}
         renderItem={({ item }) => (
@@ -181,7 +210,7 @@ export default function HomeScreen({ route, navigation }) {
       {/* Modal para agregar al carrito */}
       {selectedProduct && (
         <Modal visible={modalVisible} transparent animationType="slide">
-          <View style={styles.modalContainer}>
+        <View style={styles.modalContainer}>
             <ScrollView contentContainerStyle={styles.modalContent}>
               <Text style={styles.modalTitle}>{selectedProduct.producto_nombre}</Text>
               <Text style={styles.modalText}>Descripción: {selectedProduct.descripcion}</Text>
@@ -230,8 +259,8 @@ export default function HomeScreen({ route, navigation }) {
   );
 }
 
+// Estilos
 const styles = StyleSheet.create({
-  // ... estilos existentes
   container: {
     flex: 1,
     backgroundColor: '#f4f6ff',

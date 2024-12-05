@@ -14,7 +14,7 @@ export default function LoginScreen({ navigation }) {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://192.168.18.56:5000/api/auth/login', {
+      const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/auth/login', {
         username,
         password,
       });
@@ -26,11 +26,11 @@ export default function LoginScreen({ navigation }) {
       console.log(user.username)
       if(user.rol === "cliente"){
         try{
-          const response2 = await axios.get(`http://192.168.18.56:5000/api/producto/all`);
+          const response2 = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/all`);
           const data2 = response2.data;
           console.log(data2);
           if (data2) {
-            navigation.navigate('Home', { data2 });
+            navigation.navigate('Home', { user, data2 });
           };
         }
         catch (error) {
@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
       else if(user.rol === "agricultor"){ 
         const idA = user.id_agricultor;
         try {
-          const response1 = await axios.get(`http://192.168.18.56:5000/api/producto?id_agricultor=${idA}`);
+          const response1 = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto?id_agricultor=${idA}`);
           const data1 = response1.data;
           console.log(data1);
           navigation.navigate('Agricultor', { user, productos: data1 });
