@@ -15,7 +15,10 @@ export default function HomeScreen({ route, navigation }) {
   const [modalVisible, setModalVisible] = useState(false); // Estado del modal
   const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
   const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
+  const user = route.params?.user || [];
+  console.log("Cédula pasada a CreateReviewScreen:", user.cedula);
 
+  
   // Manejar la apertura del modal con los detalles del producto
   const handleShowProductDetails = async(item) => {
     setSelectedProduct(item); // Guardar el producto seleccionado
@@ -197,19 +200,42 @@ export default function HomeScreen({ route, navigation }) {
               <Text style={styles.priceText}>Precio Kilo: ${selectedProduct.precio}</Text>
 
                {/* Mostrar la reseña */}
+               <Text style={styles.reviewsTitle}>Reseñas:</Text>
                {reseña ? (
                 <View style={styles.reviewCard}>
-                  <Text style={styles.reviewTitle}>Reseñas:</Text>
+                <Image
+                  source={require('../assets/avatar.png')}
+                  style={styles.avatar}
+                />
+                <View style={styles.reviewContent}>
                   <Text style={styles.clientName}>{reseña.cliente}</Text>
-                  <Text style={styles.comment}>{reseña.comentario}</Text>
                   <Text style={styles.stars}>{'★'.repeat(reseña.numero_estrellas)}</Text>
-                  <TouchableOpacity onPress={() => navigation.navigate('ReviewScreen', { codigo_producto: selectedProduct.codigo })}>
-                    <Ionicons name="arrow-forward-circle" size={30} color="#4CAF50" />
-                  </TouchableOpacity>
+                  <Text style={styles.comment}>{reseña.comentario}</Text>
                 </View>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('ReviewScreen', { codigo_producto: selectedProduct.codigo })
+                  }
+                >
+                  <Ionicons name="arrow-forward-circle" size={30} color="#fff" />
+                </TouchableOpacity>
+              </View>
+              
               ) : (
                 <Text>No hay reseñas para este producto.</Text>
               )}
+
+              {/* Botón Añadir reseña */}
+<TouchableOpacity
+  style={styles.addReviewButton}
+  onPress={() => navigation.navigate('CreateReviewScreen', { 
+    codigo_producto: selectedProduct.codigo, // Código del producto
+    cedula_cliente: user.cedula,  // Cédula que viene desde el login
+  })}
+>
+  <Text style={styles.addReviewText}>Añadir reseña</Text>
+</TouchableOpacity>
+
 
 
               <TouchableOpacity
@@ -469,35 +495,64 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   reviewCard: {
+    flexDirection: 'row', // Alinea los elementos en una fila
+    alignItems: 'center', // Centra verticalmente los elementos
     backgroundColor: '#5ba73b',
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 10,
     marginBottom: 10,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Hace que la imagen sea circular
+    marginRight: 10,
+  },
+  reviewContent: {
+    flex: 1, // Permite que el contenido ocupe el espacio disponible
   },
   clientName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
   },
+  stars: {
+    fontSize: 16,
+    color: '#FFD700',
+    marginVertical: 4,
+  },
   comment: {
     fontSize: 14,
     color: '#fff',
     marginVertical: 5,
   },
-  stars: {
-    fontSize: 16,
-    color: '#FFD700',
+  arrowIcon: {
+    marginLeft: 10,
   },
-  addToCartButton: {
+  reviewsTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginVertical: 10,
+  },
+  noReviewsText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  addReviewButton: {
     backgroundColor: '#4CAF50',
-    padding: 15,
     borderRadius: 10,
+    padding: 15,
     alignItems: 'center',
     marginTop: 10,
   },
-  addToCartText: {
+  addReviewText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  
+  
 });
