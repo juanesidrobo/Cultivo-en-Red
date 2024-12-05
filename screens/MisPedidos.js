@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
 const MisPedidosScreen = ({ navigation, route }) => {
+  const total = route.params?.total || '0';
   const [facturas, setFacturas] = useState([
     { id: '1', titulo: 'Factura 1', monto: '$40.000' },
     { id: '2', titulo: 'Factura 2', monto: '$30.000' },
@@ -14,10 +15,11 @@ const MisPedidosScreen = ({ navigation, route }) => {
   }, [route.params?.total]);
 
   const agregarNuevaFactura = (nuevoTotal) => {
+    // Verifica si ya existe una factura con el mismo monto (opcional, según requisitos)
     const nuevaFactura = {
-      id: (facturas.length + 1).toString(),
-      titulo: `Factura ${facturas.length + 1}`,
-      monto: nuevoTotal,
+      id: (facturas.length + 1).toString(), // Genera un nuevo ID basado en la longitud actual
+      titulo: `Factura ${facturas.length + 1}`, // Asigna un nuevo título
+      monto: `$${nuevoTotal}`, // Formato del monto recibido
     };
     setFacturas((prevFacturas) => [...prevFacturas, nuevaFactura]);
   };
@@ -26,7 +28,7 @@ const MisPedidosScreen = ({ navigation, route }) => {
     <View style={styles.card}>
       <View style={styles.facturaInfo}>
         <Text style={styles.facturaTitulo}>{item.titulo}</Text>
-        <Text style={styles.facturaMonto}>$ {total}</Text>
+        <Text style={styles.facturaMonto}>{item.monto}</Text>
       </View>
       <TouchableOpacity
         style={styles.detallesButton}
@@ -53,14 +55,14 @@ const MisPedidosScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F8FF', 
+    backgroundColor: '#F5F8FF',
     paddingHorizontal: 16,
     paddingTop: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4CAF50', 
+    color: '#4CAF50',
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, 
+    elevation: 3,
   },
   facturaInfo: {
     flex: 1,
@@ -93,10 +95,10 @@ const styles = StyleSheet.create({
   facturaMonto: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4CAF50', 
+    color: '#4CAF50',
   },
   detallesButton: {
-    backgroundColor: '#4CAF50', 
+    backgroundColor: '#4CAF50',
     borderRadius: 15,
     paddingHorizontal: 16,
     paddingVertical: 8,

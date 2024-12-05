@@ -13,7 +13,7 @@ export default function ManageUsersScreen({ navigation, route }) {
 
   const handleCreateUser = async (newUser) => {
     try {
-      const response = await axios.post('http://192.168.18.56:5000/api/users', newUser);
+      const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/users', newUser);
       const { userId } = response.data;
       const createdUser = { id: userId, ...newUser };
   
@@ -33,7 +33,7 @@ export default function ManageUsersScreen({ navigation, route }) {
   // Eliminar un usuario
   const handleDelete = async (username) => {
     try {
-      await axios.delete(`http://192.168.18.56:5000/api/users/${username}`);
+      await axios.delete(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/users/${username}`);
       setUsers((prevUsers) => prevUsers.filter((user) => user.username !== username));
       Alert.alert('Usuario Eliminado', 'El usuario se ha eliminado correctamente.');
     } catch (error) {
@@ -45,7 +45,7 @@ export default function ManageUsersScreen({ navigation, route }) {
 
   const handleEdit = async (username, updatedData) => {
     try {
-      await axios.put(`http://192.168.18.56:5000/api/users/${username}`, updatedData);
+      await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/users/${username}`, updatedData);
       setUsers(users.map((user) => (user.username === username ? { ...user, ...updatedData } : user)));
       Alert.alert('Usuario Actualizado', 'El usuario se ha actualizado correctamente.');
     } catch (error) {
