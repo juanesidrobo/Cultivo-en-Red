@@ -23,7 +23,7 @@ export default function HomeScreen({ route, navigation }) {
     setModalVisible(true); // Mostrar el modal
     // Obtener una reseña aleatoria para el producto
     try {
-      const response = await axios.get(`http://192.168.80.20:5000/api/resenas/${item.codigo}`);
+      const response = await axios.get(`http://192.168.0.17:5000/api/resenas/${item.codigo}`);
       const reseñas = response.data.resenas;
       if (reseñas.length > 0) {
         setReseña(reseñas[Math.floor(Math.random() * reseñas.length)]);
