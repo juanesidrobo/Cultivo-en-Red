@@ -114,6 +114,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  header: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   bienvenido: {
     textAlign: 'center',
     fontSize: 16,
@@ -127,6 +131,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     margin: 10,
+
   },
   normal: {
     textAlign: 'center',

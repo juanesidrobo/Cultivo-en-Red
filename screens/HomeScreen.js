@@ -25,7 +25,10 @@ export default function HomeScreen({route, navigation}) {
           <Ionicons name="cart-outline" size={24} color="#fff" style={styles.cartIcon} />
         </TouchableOpacity>
       </View>
-
+      <TouchableOpacity
+        onPress={() => navigation.navigate('EnviosCliente')}>
+        <Text>Envio Cliente</Text>
+      </TouchableOpacity>
       {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
         <TextInput 
