@@ -120,7 +120,10 @@ export default function HomeScreen({ route, navigation }) {
           )}
         </TouchableOpacity>
       </View>
-
+      <TouchableOpacity
+        onPress={() => navigation.navigate('EnviosCliente')}>
+        <Text>Envio Cliente</Text>
+      </TouchableOpacity>
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { marginHorizontal: 40 }]}>
         <TextInput

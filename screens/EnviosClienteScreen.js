@@ -1,21 +1,89 @@
-import React from 'react';
+import React, { useState, useEffect }  from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const envio = require('../assets/envio.jpeg');
-const EnviosClienteScreen = () => {
-  // Datos de ejemplo
-  const transportador = {
-    nombre: "Jose Mario",
-    placa: "LKJ 26L",
+
+const imagenes = [
+    require('../assets/Ruta1.png'),
+    require('../assets/Ruta2.png'),
+    require('../assets/Ruta3.png'),
+    require('../assets/Ruta4.png'),
+    require('../assets/Ruta5.png'),
+    require('../assets/Ruta6.png'),
+  ];
+
+
+  const EnviosClienteScreen = () => {
+
+    const [imagenSeleccionada] = useState(
+        imagenes[Math.floor(Math.random() * imagenes.length)]
+    );
+
+    const transportador = {
+       nombre: "Jose Mario",
+       placa: "LKJ 26L",
+       imagen: require('../assets/transportador.png'),
+    };
+
+    const telefono = {
+        imagen2: require('../assets/telefono.png'),
+    };
+
+    const mensaje = {
+        imagen2: require('../assets/mesaje.png'),
+    };
+
+    const [estadoEnvio, setEstadoEnvio] = useState([
+        { id: 1, texto: "Transportador asignado", completo: false },
+        { id: 2, texto: "Pedido Recogido", completo: false },
+        { id: 3, texto: "El transportador se dirige a tu dirección", completo: false },
+        { id: 4, texto: "Pedido entregado", completo: false },
+  ]);
+
+  const [temporizadores, setTemporizadores] = useState([]);
+
+  useEffect(() => {
+    iniciarTemporizadores();
+
+    // Limpia temporizadores al desmontar
+    return () => {
+      temporizadores.forEach((timer) => clearTimeout(timer));
+    };
+  }, []);
+
+  const iniciarTemporizadores = () => {
+    // Limpia temporizadores anteriores
+    temporizadores.forEach((timer) => clearTimeout(timer));
+
+    const nuevosTemporizadores = [
+      setTimeout(() => actualizarEstado(0), 5000),
+      setTimeout(() => actualizarEstado(1), 10000),
+      setTimeout(() => actualizarEstado(2), 15000),
+    ];
+
+    setTemporizadores(nuevosTemporizadores);
   };
 
-  const estadoEnvio = [
-    { id: 1, texto: "Transportador asignado", completo: true },
-    { id: 2, texto: "Pedido Recogido", completo: true },
-    { id: 3, texto: "El transportador se dirige a tu dirección", completo: true },
-    { id: 4, texto: "Pedido entregado", completo: false },
-  ];
+  const reiniciarEstados = () => {
+    setEstadoEnvio([
+      { id: 1, texto: "Transportador asignado", completo: false },
+      { id: 2, texto: "Pedido Recogido", completo: false },
+      { id: 3, texto: "El transportador se dirige a tu dirección", completo: false },
+      { id: 4, texto: "Pedido entregado", completo: false },
+    ]);
+    iniciarTemporizadores(); 
+  };
+
+  const actualizarEstado = (index) => {
+    setEstadoEnvio((prevEstado) =>
+      prevEstado.map((estado, i) => (i === index ? { ...estado, completo: true } : estado))
+    );
+  };
+
+  const marcarPedidoEntregado = () => {
+    actualizarEstado(3); // Cambia "Pedido entregado" a true
+  };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -23,27 +91,39 @@ const EnviosClienteScreen = () => {
       <Text style={styles.titulo}>Detalles de tu envío</Text>
 
       {/* Imagen */}
-      <Image source={envio} style={styles.imagen}/>
+      <Image source={imagenSeleccionada} style={styles.imagen}/>
 
-      {/* Información del transportador */}
-      <View style={styles.transportadorInfo}>
-        <Text style={styles.textoBold}>
-          Transportador asignado:
-        </Text>
-        <Text style={styles.texto}>
-          Tu transportador es <Text style={styles.textoBold}>{transportador.nombre}</Text>
-        </Text>
-        <Text style={styles.texto}>
-          Placa: <Text style={styles.textoBold}>{transportador.placa}</Text>
-        </Text>
-      </View>
+    {/* Información del transportador */}
+    <View style={styles.transportadorInfoContainer}>
+        {/* Información del transportador */}
+        <View style={styles.transportadorInfo}>
+            <Text style={styles.texto}>
+            <Text style={styles.textoBold2}>{transportador.placa}</Text>
+            </Text>
+            <Text style={styles.texto}>
+            <Text style={styles.textoBold}>{transportador.nombre}</Text>
+            </Text>
+        </View>
+        {/* Imagen del transportador */}
+        <Image source={transportador.imagen} style={styles.transportadorImagen} />
+    </View>
 
       {/* Línea de tiempo del envío */}
       <View style={styles.timeline}>
         {estadoEnvio.map((estado) => (
           <View key={estado.id} style={styles.timelineItem}>
-            <View style={[styles.timelineMarker, estado.completo && styles.timelineMarkerComplete]} />
-            <Text style={[styles.timelineTexto, estado.completo && styles.textoCompleto]}>
+            <View
+              style={[
+                styles.timelineMarker,
+                estado.completo && styles.timelineMarkerComplete,
+              ]}
+            />
+            <Text
+              style={[
+                styles.timelineTexto,
+                estado.completo && styles.textoCompleto,
+              ]}
+            >
               {estado.texto}
             </Text>
           </View>
@@ -51,9 +131,15 @@ const EnviosClienteScreen = () => {
       </View>
 
       {/* Botón de acción */}
-      <TouchableOpacity style={styles.boton}>
+      <View style={styles.BotonContainer}>
+      {/* Imagen del transportador */}
+      <Image source={telefono.imagen2} style={styles.IconImagen} />
+      {/* Imagen del transportador */}
+      <Image source={mensaje.imagen2} style={styles.IconImagen} />
+      <TouchableOpacity style={styles.boton} onPress={marcarPedidoEntregado}>
         <Text style={styles.botonTexto}>Pedido Recibido</Text>
       </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -67,18 +153,27 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2E7D32',
+    color: '#5ba73b',
     marginVertical: 16,
     textAlign: 'center',
   },
   imagen: {
     width: 272,
     height: 269,
+    resizeMode: 'contain',
     borderRadius: 10,
     marginBottom: 16,
   },
-  transportadorInfo: {
-    padding: 16,
+  imagen2: {
+    width: 262,
+    height: 249,
+    resizeMode: 'contain',
+    borderRadius: 10,
+    marginBottom: 16,
+  },
+  transportadorInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     marginBottom: 16,
@@ -87,12 +182,44 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  transportadorInfo: {
+    padding: 10,
+    marginStart: 60,
+    marginEnd: 30,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  transportadorImagen: {
+    width: 50,
+    height: 50,
+    marginStart: 30,
+    marginEnd: 30,
+    borderRadius: 25,
+    marginRight: 16,
+    borderWidth: 2,
+    borderColor: '#2E7D32',
+  },
+  IconImagen: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 16,
+    borderWidth: 2,
+    borderColor: '#5ba73b',
+  },
   texto: {
-    fontSize: 14,
     color: '#4A4A4A',
-    marginBottom: 4,
   },
   textoBold: {
+    fontSize: 14,
+    color: '#4A4A4A',
+  },
+  textoBold2: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#2E7D32',
   },
@@ -108,7 +235,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#B0BEC5',
+    backgroundColor: '#2E7D32',
     marginRight: 8,
   },
   timelineMarkerComplete: {
@@ -116,13 +243,14 @@ const styles = StyleSheet.create({
   },
   timelineTexto: {
     fontSize: 14,
-    color: '#4A4A4A',
+    color: '#2E7D32',
   },
   textoCompleto: {
     color: '#2E7D32',
   },
   boton: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#5ba73b',
+    paddingHorizontal: 50,
     paddingVertical: 12,
     borderRadius: 10,
     alignItems: 'center',
@@ -131,6 +259,15 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  BotonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 1,
+    borderRadius: 10,
+    marginBottom: 16,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
 });
 
