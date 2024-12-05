@@ -14,6 +14,7 @@ export default function EditProductScreen({ route, navigation }) {
   const handleSaveChanges = async () => {
     setLoading(true);
     console.log("ID:"+product.codigo);
+    //Permite actualizar los atributos del producto
     console.log("ID agricultor:"+user.id_agricultor);
     try {
       const response = await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}`, {
@@ -34,7 +35,7 @@ export default function EditProductScreen({ route, navigation }) {
       setLoading(false);
     }
   };
-
+//permite eliminar un producto
   const handleDeleteProduct = async () => {
     Alert.alert(
       "Eliminar Producto",

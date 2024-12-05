@@ -50,11 +50,7 @@ export default function LoginScreen({ navigation }) {
           const data1 = response1.data;
           console.log(data1);
           navigation.navigate('Agricultor', { user, productos: data1 });
-          /* if (data1.length > 0) {
-            navigation.navigate('Agricultor', { user, productos: data1 });
-          } else {
-            Alert.alert('Error', 'No hay productos disponibles.');
-          } */
+          
         }
         catch (error) {
           console.error(error);

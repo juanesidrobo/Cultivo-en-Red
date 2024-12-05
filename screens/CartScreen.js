@@ -4,17 +4,17 @@ import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 
 export default function CartScreen({ route, navigation }) {
-  const { cart } = route.params; // Productos enviados desde HomeScreen
-  const [selectedItems, setSelectedItems] = useState([]); // Productos seleccionados
-  const [cartItems, setCartItems] = useState(cart); // Estado para los productos del carrito
-  const [loading, setLoading] = useState(false); // Estado para manejar el indicador de carga
+  const { cart } = route.params; 
+  const [selectedItems, setSelectedItems] = useState([]); 
+  const [cartItems, setCartItems] = useState(cart); 
+  const [loading, setLoading] = useState(false); 
 
-  // Manejar la selección de un producto
+ //Permite seleccionar los productos
   const handleSelectItem = (item) => {
     if (selectedItems.includes(item.codigo)) {
-      setSelectedItems(selectedItems.filter((id) => id !== item.codigo)); // Deseleccionar si ya está seleccionado
+      setSelectedItems(selectedItems.filter((id) => id !== item.codigo)); 
     } else {
-      setSelectedItems([...selectedItems, item.codigo]); // Agregar si no está seleccionado
+      setSelectedItems([...selectedItems, item.codigo]); 
     }
   };
 
@@ -31,7 +31,7 @@ export default function CartScreen({ route, navigation }) {
             const updatedCart = cartItems.filter((cartItem) => cartItem.codigo !== item.codigo);
             setCartItems(updatedCart);
 
-            // También actualizamos la lista de seleccionados
+            
             setSelectedItems(selectedItems.filter((id) => id !== item.codigo));
 
           },
@@ -44,7 +44,7 @@ export default function CartScreen({ route, navigation }) {
   const calculateTotalPrice = () => {
     return selectedItems.reduce((total, id) => {
       const item = cartItems.find((cartItem) => cartItem.codigo === id);
-      return item ? total + item.precio * item.cantidad : total; // Asegurarnos de que el producto existe
+      return item ? total + item.precio * item.cantidad : total; 
     }, 0);
   };
 
@@ -59,12 +59,12 @@ export default function CartScreen({ route, navigation }) {
     );
   };
 
-  // Procesar pedido y actualizar cantidades en el backend
+  // Procesar pedido y actualizar cantidades
   const handleSaveChanges = async () => {
     setLoading(true);
 
     try {
-      const updatedProducts = []; // Array para almacenar los datos que se enviarán
+      const updatedProducts = []; 
 
       // Iterar sobre los productos seleccionados en el carrito
       for (const item of selectedItems) {
@@ -74,7 +74,7 @@ export default function CartScreen({ route, navigation }) {
         // Calcular la nueva cantidad disponible
         const cantidadActualizada = product.cantidadDisponible - product.cantidad;
 
-        // Preparar los datos a enviar
+
         const productData = {
           id_agricultor: product.agricultor_id,
           nombre: product.producto_nombre,
@@ -84,10 +84,8 @@ export default function CartScreen({ route, navigation }) {
           direccion: product.direccion,
         };
 
-        // Agregar el producto a la lista de datos enviados
+        // Agregar el producto a la lista 
         updatedProducts.push({ codigo: product.codigo, ...productData });
-
-        // Enviar la solicitud al backend
         await axios.put(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/${product.codigo}`, productData);
         
       }
@@ -182,7 +180,7 @@ export default function CartScreen({ route, navigation }) {
         <TouchableOpacity
           style={styles.orderButton}
           onPress={handleSaveChanges}
-          disabled={loading} // Deshabilitar botón mientras se procesa
+          disabled={loading} 
         >
           <Text style={styles.orderButtonText}>
             {loading ? "Procesando..." : "Hacer Pedido"}

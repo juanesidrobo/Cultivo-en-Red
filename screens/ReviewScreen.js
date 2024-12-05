@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import axios from 'axios';
 
 export default function ReviewScreen({ route }) {
-  const { codigo_producto } = route.params; // ID del producto pasado como parámetro
+  const { codigo_producto } = route.params; 
   const [resenas, setResenas] = useState([]);
   const [promedio, setPromedio] = useState(0);
-  const [nombreProducto, setNombreProducto] = useState(''); // Estado para el nombre del producto
+  const [nombreProducto, setNombreProducto] = useState('');
 
-  // Obtener reseñas y nombre del producto desde el backend
+
   useEffect(() => {
     const fetchDatos = async () => {
       try {
@@ -19,7 +19,7 @@ export default function ReviewScreen({ route }) {
         setResenas(resenasResponse.data.resenas);
         setPromedio(resenasResponse.data.promedio);
 
-        // Obtener el nombre del producto utilizando el endpoint específico
+        
         const productoResponse = await axios.get(
           `https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/searchbyCodigo?codigo=${codigo_producto}`
         );
@@ -38,7 +38,7 @@ export default function ReviewScreen({ route }) {
     <View style={styles.reviewCard}>
       <Image
         style={styles.avatar}
-        source={require('../assets/avatar.png')} // Cambia por una imagen adecuada
+        source={require('../assets/avatar.png')} 
       />
       <View style={styles.reviewContent}>
         <Text style={styles.clientName}>{item.cliente}</Text>
@@ -52,7 +52,7 @@ export default function ReviewScreen({ route }) {
     <View style={styles.container}>
       <Text style={styles.header}>RESEÑAS</Text>
       <Text style={styles.productName}>
-        {nombreProducto || 'Cargando...'} {/* Muestra "Cargando..." mientras se obtiene el nombre */}
+        {nombreProducto || 'Cargando...'} 
       </Text>
       <Text style={styles.averageStars}>{'★'.repeat(Math.round(promedio))}</Text>
       <FlatList
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   averageStars: {
     fontSize: 24,
-    color: '#FFD700', // Color dorado para las estrellas
+    color: '#FFD700', 
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   stars: {
-    color: '#FFD700', // Color dorado para las estrellas
+    color: '#FFD700', 
     fontSize: 16,
   },
 });

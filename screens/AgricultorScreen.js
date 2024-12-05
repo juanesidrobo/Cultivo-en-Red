@@ -6,25 +6,25 @@ import axios from 'axios';
 export default function AgricultorScreen({ navigation, route }) {
   const userData = route.params?.user; // Datos del agricultor
   const [productos, setProductos] = useState([]); // Lista de productos
-  const [loading, setLoading] = useState(true); // Indicador de carga
+  const [loading, setLoading] = useState(true); 
 
-  // Función para obtener productos desde el backend
+  // Función para obtener productos
   const fetchProductos = async () => {
     try {
-      setLoading(true); // Inicia el indicador de carga
+      setLoading(true); 
       const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto?id_agricultor=${userData.id_agricultor}`);
-      setProductos(response.data); // Actualiza la lista de productos
+      setProductos(response.data); 
     } catch (error) {
       console.error("Error al cargar productos:", error);
     } finally {
-      setLoading(false); // Detiene el indicador de carga
+      setLoading(false); 
     }
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchProductos();
-    }, []) // Ejecuta fetchProductos cuando la pantalla se enfoca
+    }, []) 
   );
 
   const handleAddProduct = () => {
@@ -42,7 +42,7 @@ export default function AgricultorScreen({ navigation, route }) {
         <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.nombre}!</Text>
       </View>
       {loading ? (
-        <ActivityIndicator size="large" color="#4CAF50" /> // Indicador mientras carga
+        <ActivityIndicator size="large" color="#4CAF50" /> 
       ) : (
         <View style={styles.productsContainer}>
           {productos.length > 0 ? (
