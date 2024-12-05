@@ -7,7 +7,7 @@ const bancolombia = require('../assets/bancolombia.png');
 const mercadopago = require('../assets/mercadop.png');
 
 export default function PaymentScreen({ route, navigation }) {
-  const { total } = route.params; // Recibe el total enviado desde la pantalla anterior
+  const { total } = route.params;
   const [selectedPlatform, setSelectedPlatform] = useState('');
 
   const platforms = [
