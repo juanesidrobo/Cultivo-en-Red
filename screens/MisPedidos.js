@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-const MisPedidosScreen = ({ navigation }) => {
-  const facturas = [
+const MisPedidosScreen = ({ navigation, route }) => {
+  const [facturas, setFacturas] = useState([
     { id: '1', titulo: 'Factura 1', monto: '$40.000' },
     { id: '2', titulo: 'Factura 2', monto: '$30.000' },
-  ];
+  ]);
+
+  useEffect(() => {
+    if (route.params?.total) {
+      agregarNuevaFactura(route.params.total);
+    }
+  }, [route.params?.total]);
+
+  const agregarNuevaFactura = (nuevoTotal) => {
+    const nuevaFactura = {
+      id: (facturas.length + 1).toString(),
+      titulo: `Factura ${facturas.length + 1}`,
+      monto: nuevoTotal,
+    };
+    setFacturas((prevFacturas) => [...prevFacturas, nuevaFactura]);
+  };
 
   const renderFactura = ({ item }) => (
     <View style={styles.card}>
@@ -38,14 +53,14 @@ const MisPedidosScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F8FF', // Fondo claro
+    backgroundColor: '#F5F8FF', 
     paddingHorizontal: 16,
     paddingTop: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4CAF50', // Color verde
+    color: '#4CAF50', 
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -64,7 +79,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, // Sombra en Android
+    elevation: 3, 
   },
   facturaInfo: {
     flex: 1,
@@ -78,10 +93,10 @@ const styles = StyleSheet.create({
   facturaMonto: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4CAF50', // Color verde
+    color: '#4CAF50', 
   },
   detallesButton: {
-    backgroundColor: '#4CAF50', // Color verde
+    backgroundColor: '#4CAF50', 
     borderRadius: 15,
     paddingHorizontal: 16,
     paddingVertical: 8,

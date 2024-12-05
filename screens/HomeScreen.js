@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import MisPedidosScreen from './MisPedidos';
 
 const anuncio = require('../assets/anucio-cliente.png');
 const verduras = require('../assets/verduras.png');
@@ -107,7 +108,7 @@ export default function HomeScreen({ route, navigation }) {
     <View>
       {/* Header */}
       <View style={[styles.header, { paddingHorizontal: 40 }]}>
-        <TouchableOpacity style={styles.menuButton}>
+        <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate('MisPedidos')}>
           <Ionicons name="menu" size={24} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.title}>CULTIVO en RED</Text>
@@ -120,10 +121,6 @@ export default function HomeScreen({ route, navigation }) {
           )}
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('MisPedidos')}>
-        <Text>Envio Cliente</Text>
-      </TouchableOpacity>
       {/* Barra de búsqueda */}
       <View style={[styles.searchContainer, { marginHorizontal: 40 }]}>
         <TextInput

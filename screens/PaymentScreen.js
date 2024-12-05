@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 
 export default function PaymentScreen({ route, navigation }) {
-  const { total } = route.params; // Recibe el total enviado desde la pantalla anterior
+  const { total } = route.params;
   const [selectedPlatform, setSelectedPlatform] = useState('');
 
   const platforms = [
@@ -25,7 +25,7 @@ export default function PaymentScreen({ route, navigation }) {
       [
         {
           text: 'Aceptar',
-          onPress: () => navigation.goBack(), // Regresa a la pantalla anterior
+          onPress: () => navigation.navigate('MisPedidos', {total}),
         },
       ]
     );
