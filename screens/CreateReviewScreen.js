@@ -8,22 +8,21 @@ export default function CreateReviewScreen({ route, navigation }) {
     const [comentario, setComentario] = useState(''); // Comentario
   
     const handleSubmit = async () => {
-      // Validar campos
+    
       if (!numeroEstrellas || !comentario) {
         Alert.alert('Error', 'Por favor completa todos los campos.');
         return;
       }
   
       try {
-        // Enviar la cédula como id_cliente
         const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas', {
-          id_cliente: cedula_cliente, // Usa la cédula pasada desde HomeScreen
+          id_cliente: cedula_cliente, 
           codigo_producto,
           numero_estrellas: numeroEstrellas,
           comentario,
         });
         Alert.alert('Éxito', 'Reseña enviada con éxito.');
-        navigation.goBack(); // Regresar a la pantalla anterior
+        navigation.goBack(); 
       } catch (error) {
         console.error('Error al enviar la reseña:', error);
         Alert.alert('Error', 'Hubo un problema al enviar la reseña.');
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
   },
   selectedStar: {
     fontSize: 30,
-    color: '#FFD700', // Color dorado para las estrellas seleccionadas
+    color: '#FFD700', 
   },
   textInput: {
     backgroundColor: '#e5e5e5',

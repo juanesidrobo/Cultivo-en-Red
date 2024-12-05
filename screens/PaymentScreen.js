@@ -22,15 +22,13 @@ export default function PaymentScreen({ route, navigation }) {
       Alert.alert('Error', 'Por favor selecciona una plataforma de pago.');
       return;
     }
-
-    // Simulación de pago
     Alert.alert(
       'Pago Exitoso',
       `Has pagado $${total} usando ${selectedPlatform}. ¡Gracias por tu compra!`,
       [
         {
           text: 'Aceptar',
-          onPress: () => navigation.navigate('MisPedidos', { total }), // Navega a la pantalla MisPedidos
+          onPress: () => navigation.navigate('MisPedidos', { total }), 
         },
       ]
     );
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 100, // Asegurar que los botones sean uniformes
+    height: 100, 
   },
   selectedPlatform: {
     backgroundColor: '#4CAF50',

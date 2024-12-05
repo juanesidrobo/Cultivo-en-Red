@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
+//envia una factura con el pedido realizado
 const MisPedidosScreen = ({ navigation, route }) => {
   const total = route.params?.total || '0';
   const [facturas, setFacturas] = useState([

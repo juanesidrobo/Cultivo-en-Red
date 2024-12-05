@@ -1,4 +1,4 @@
-//screens/AdminScreen.js
+
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button, VStack, Center } from "native-base";
@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const tienda = require('../assets/tiendaLogin.png'); 
 
-export default function AdminScreen({ navigation, route }) {// Asegúrate de que la imagen exista
+export default function AdminScreen({ navigation, route }) {
   const user = route.params?.user;
   const handleUsers = async () => {
     try {

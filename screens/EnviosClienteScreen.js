@@ -18,7 +18,7 @@ const imagenes = [
     const [imagenSeleccionada] = useState(
         imagenes[Math.floor(Math.random() * imagenes.length)]
     );
-
+   //Datos de los trnasportadores
     const transportadores = [
         {
           nombre: "Jose Mario",

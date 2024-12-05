@@ -13,7 +13,6 @@ const AddProductScreen = ({navigation, route}) => {
   const handleAddProduct = async () => {
     const userData = route.params?.user;
     console.log('userData:', userData);
-    // Aquí iría la lógica para agregar el producto
     console.log('Producto agregado:', {
       productName,
       location,

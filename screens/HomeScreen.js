@@ -10,22 +10,21 @@ const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
 
 export default function HomeScreen({ route, navigation }) {
-  const [cart, setCart] = useState([]); // Estado para manejar el carrito
-  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
-  const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
-  const [modalVisible, setModalVisible] = useState(false); // Estado del modal
+  const [cart, setCart] = useState([]); 
+  const [selectedProduct, setSelectedProduct] = useState(null); 
+  const [quantity, setQuantity] = useState(1); 
+  const [modalVisible, setModalVisible] = useState(false);
   const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
-  //const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
   const [searchText, setSearchText] = useState('');
   const [data, setData] = useState(route.params?.data2 || []);
   const user = route.params?.user || [];
   console.log("Cédula pasada a CreateReviewScreen:", user.cedula);
 
-  // Manejar la apertura del modal con los detalles del producto
+  
   const handleShowProductDetails = async(item) => {
     setSelectedProduct(item); // Guardar el producto seleccionado
     setQuantity(1); // Restablecer la cantidad inicial
-    setModalVisible(true); // Mostrar el modal
+    setModalVisible(true); 
     // Obtener una reseña aleatoria para el producto
     try {
       const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas/${item.codigo}`);
@@ -57,14 +56,13 @@ export default function HomeScreen({ route, navigation }) {
     }
   };
 
-  // Efecto para restaurar los datos originales cuando el texto de búsqueda está vacío
+
   useEffect(() => {
     if (searchText.trim() === '') {
       setData(route.params?.data2 || []);
     }
   }, [searchText]);
 
-  // Resto de funciones (handleAddToCart, handleGoToCart, etc.)
   // Confirmar y agregar el producto al carrito
   const handleAddToCart = () => {
     if (!selectedProduct) return;
@@ -521,8 +519,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   reviewCard: {
-    flexDirection: 'row', // Alinea los elementos en una fila
-    alignItems: 'center', // Centra verticalmente los elementos
+    flexDirection: 'row', 
+    alignItems: 'center', 
     backgroundColor: '#5ba73b',
     borderRadius: 20,
     padding: 10,
@@ -531,11 +529,11 @@ const styles = StyleSheet.create({
   avatar: {
     width: 50,
     height: 50,
-    borderRadius: 25, // Hace que la imagen sea circular
+    borderRadius: 25, 
     marginRight: 10,
   },
   reviewContent: {
-    flex: 1, // Permite que el contenido ocupe el espacio disponible
+    flex: 1, 
   },
   clientName: {
     fontSize: 16,
