@@ -1,6 +1,6 @@
 import React, { useState, useEffect }  from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 
 const imagenes = [
@@ -19,11 +19,37 @@ const imagenes = [
         imagenes[Math.floor(Math.random() * imagenes.length)]
     );
 
-    const transportador = {
-       nombre: "Jose Mario",
-       placa: "LKJ 26L",
-       imagen: require('../assets/transportador.png'),
-    };
+    const transportadores = [
+        {
+          nombre: "Jose Mario",
+          placa: "LKJ 26L",
+          imagen: require('../assets/transportador.png'),
+        },
+        {
+          nombre: "Ana Rodríguez",
+          placa: "XYZ 89M",
+          imagen: require('../assets/transportador.png'),
+        },
+        {
+          nombre: "Sebastian Jimenez",
+          placa: "JDV 84D",
+          imagen: require('../assets/transportador.png'),
+        },
+        {
+          nombre: "Juan Idrobo",
+          placa: "LDO 32M",
+          imagen: require('../assets/transportador.png'),
+        },
+        {
+          nombre: "Carlos Pérez",
+          placa: "ABC 45X",
+          imagen: require('../assets/transportador.png'),
+        },
+      ];
+
+      const [transportador] = useState(
+        transportadores[Math.floor(Math.random() * transportadores.length)]
+      );
 
     const telefono = {
         imagen2: require('../assets/telefono.png'),
@@ -45,14 +71,14 @@ const imagenes = [
   useEffect(() => {
     iniciarTemporizadores();
 
-    // Limpia temporizadores al desmontar
+
     return () => {
       temporizadores.forEach((timer) => clearTimeout(timer));
     };
   }, []);
 
   const iniciarTemporizadores = () => {
-    // Limpia temporizadores anteriores
+
     temporizadores.forEach((timer) => clearTimeout(timer));
 
     const nuevosTemporizadores = [
@@ -81,7 +107,7 @@ const imagenes = [
   };
 
   const marcarPedidoEntregado = () => {
-    actualizarEstado(3); // Cambia "Pedido entregado" a true
+    actualizarEstado(3); 
   };
 
 
@@ -91,8 +117,9 @@ const imagenes = [
       <Text style={styles.titulo}>Detalles de tu envío</Text>
 
       {/* Imagen */}
+      <View style={styles.imagenContenedor}>
       <Image source={imagenSeleccionada} style={styles.imagen}/>
-
+      </View>
     {/* Información del transportador */}
     <View style={styles.transportadorInfoContainer}>
         {/* Información del transportador */}
@@ -163,6 +190,10 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderRadius: 10,
     marginBottom: 16,
+  },
+  imagenContenedor: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   imagen2: {
     width: 262,
@@ -235,7 +266,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#a0a59e',
     marginRight: 8,
   },
   timelineMarkerComplete: {
@@ -243,7 +274,7 @@ const styles = StyleSheet.create({
   },
   timelineTexto: {
     fontSize: 14,
-    color: '#2E7D32',
+    color: '#a0a59e',
   },
   textoCompleto: {
     color: '#2E7D32',

@@ -18,8 +18,8 @@ export default function LoginScreen({ navigation }) {
         username,
         password,
       });
-      // Manejar la respuesta y redirigir a Home
-      const data = response.data; // Supongo que el backend envía los datos del usuario aquí
+
+      const data = response.data; 
       const user = data.user;
       console.log(user);
       
