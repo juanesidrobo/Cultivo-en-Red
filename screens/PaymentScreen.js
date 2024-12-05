@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
+
+const nequi = require('../assets/nequi.png');
+const daviplata = require('../assets/daviaplata.png');
+const bancolombia = require('../assets/bancolombia.png');
+const mercadopago = require('../assets/mercadop.png');
 
 export default function PaymentScreen({ route, navigation }) {
   const { total } = route.params; // Recibe el total enviado desde la pantalla anterior
   const [selectedPlatform, setSelectedPlatform] = useState('');
 
   const platforms = [
-    { id: 'nequi', name: 'Nequi' },
-    { id: 'daviplata', name: 'Daviplata' },
-    { id: 'bancolombia', name: 'Bancolombia' },
-    { id: 'mercadopago', name: 'MercadoPago' },
+    { id: 'nequi', name: 'Nequi', image: nequi },
+    { id: 'daviplata', name: 'Daviplata', image: daviplata },
+    { id: 'bancolombia', name: 'Bancolombia', image: bancolombia },
+    { id: 'mercadopago', name: 'MercadoPago', image: mercadopago },
   ];
 
   const handlePayment = () => {
@@ -25,11 +30,10 @@ export default function PaymentScreen({ route, navigation }) {
       [
         {
           text: 'Aceptar',
-          onPress: () => navigation.navigate('MisPedidos', {total}), // Navega a la pantalla Home
+          onPress: () => navigation.navigate('MisPedidos', { total }), // Navega a la pantalla MisPedidos
         },
       ]
     );
-     
   };
 
   return (
@@ -47,7 +51,7 @@ export default function PaymentScreen({ route, navigation }) {
             ]}
             onPress={() => setSelectedPlatform(platform.name)}
           >
-            <Text style={styles.platformText}>{platform.name}</Text>
+            <Image source={platform.image} style={styles.platformImage} />
           </TouchableOpacity>
         ))}
       </View>
@@ -83,21 +87,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   platformButton: {
-    padding: 15,
+    padding: 10,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 5,
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 100, // Asegurar que los botones sean uniformes
   },
   selectedPlatform: {
     backgroundColor: '#4CAF50',
     borderColor: '#4CAF50',
   },
-  platformText: {
-    fontSize: 16,
-    color: '#333',
+  platformImage: {
+    width: 80,
+    height: 40,
+    resizeMode: 'contain',
   },
   payButton: {
     padding: 15,
@@ -112,4 +119,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

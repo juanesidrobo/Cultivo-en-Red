@@ -16,7 +16,7 @@ export default function CreateReviewScreen({ route, navigation }) {
   
       try {
         // Enviar la cédula como id_cliente
-        const response = await axios.post('http://192.168.80.20:5000/api/resenas', {
+        const response = await axios.post('https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas', {
           id_cliente: cedula_cliente, // Usa la cédula pasada desde HomeScreen
           codigo_producto,
           numero_estrellas: numeroEstrellas,

@@ -10,7 +10,7 @@ export default function AdminScreen({ navigation, route }) {// Asegúrate de que
   const user = route.params?.user;
   const handleUsers = async () => {
     try {
-      const response = await axios.get('http://192.168.18.56:5000/api/users/');
+      const response = await axios.get('https://cultivo-en-red-1074366058014.us-east1.run.app/api/users/');
       const data = response.data;
       console.log(data);
       if (data) {

@@ -14,14 +14,14 @@ export default function ReviewScreen({ route }) {
       try {
         // Obtener las reseñas
         const resenasResponse = await axios.get(
-          `http://192.168.80.20:5000/api/resenas/${codigo_producto}`
+          `https://cultivo-en-red-1074366058014.us-east1.run.app/api/resenas/${codigo_producto}`
         );
         setResenas(resenasResponse.data.resenas);
         setPromedio(resenasResponse.data.promedio);
 
         // Obtener el nombre del producto utilizando el endpoint específico
         const productoResponse = await axios.get(
-          `http://192.168.80.20:5000/api/producto/searchbyCodigo?codigo=${codigo_producto}`
+          `https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto/searchbyCodigo?codigo=${codigo_producto}`
         );
         setNombreProducto(productoResponse.data.nombre || 'Producto no encontrado');
       } catch (error) {

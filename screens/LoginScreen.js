@@ -30,7 +30,7 @@ export default function LoginScreen({ navigation }) {
           const data2 = response2.data;
           console.log(data2);
           if (data2) {
-            navigation.navigate('Home', { user, data2 });
+            navigation.navigate('Home', { user,data2 });
           };
         }
         catch (error) {
