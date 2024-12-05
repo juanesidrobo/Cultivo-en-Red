@@ -2,11 +2,26 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button, VStack, Center } from "native-base";
+import axios from 'axios';
 
 const tienda = require('../assets/tiendaLogin.png'); 
 
 export default function AdminScreen({ navigation, route }) {// Asegúrate de que la imagen exista
   const user = route.params?.user;
+  const handleUsers = async () => {
+    try {
+      const response = await axios.get('http://192.168.18.56:5000/api/users/');
+      const data = response.data;
+      console.log(data);
+      if (data) {
+        navigation.navigate('ManageUsers', { users: data });
+      }
+
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudieron cargar los usuarios.');
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -20,7 +35,7 @@ export default function AdminScreen({ navigation, route }) {// Asegúrate de que
           size="lg"
           colorScheme="green"
           style={styles.button}
-          onPress={() => navigation.navigate('ManageUsers')}
+          onPress={(handleUsers)}
         >
           Gestionar Usuarios
         </Button>

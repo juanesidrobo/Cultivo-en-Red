@@ -12,7 +12,7 @@ export default function AgricultorScreen({ navigation, route }) {
   const fetchProductos = async () => {
     try {
       setLoading(true); // Inicia el indicador de carga
-      const response = await axios.get(`https://cultivo-en-red-1074366058014.us-east1.run.app/api/producto?id_agricultor=${userData.id_agricultor}`);
+      const response = await axios.get(`http://192.168.18.56:5000/api/producto?id_agricultor=${userData.id_agricultor}`);
       setProductos(response.data); // Actualiza la lista de productos
     } catch (error) {
       console.error("Error al cargar productos:", error);
@@ -39,7 +39,7 @@ export default function AgricultorScreen({ navigation, route }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>CULTIVO en RED</Text>
-        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.username}!</Text>
+        <Text style={styles.welcomeText}>Bienvenido Agricultor {userData?.nombre}!</Text>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#4CAF50" /> // Indicador mientras carga

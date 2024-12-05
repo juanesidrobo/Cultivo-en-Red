@@ -1,28 +1,96 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native';
+import React, { useState,useEffect  } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, FlatList, Alert, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
 
 const anuncio = require('../assets/anucio-cliente.png');
 const verduras = require('../assets/verduras.png');
 const plantas = require('../assets/plantas.png');
 const frutas = require('../assets/frutas-cliente.png');
-export default function HomeScreen({route, navigation}) {
-  const data2 = route.params?.data2;
-  //console.log(user);
-  console.log('Productos ' + data2);
-  const handleSearch = () => {
-    console.log('Buscar...');
-  }
-  return (
-    <ScrollView style={styles.container}>
+
+export default function HomeScreen({ route, navigation }) {
+  const [cart, setCart] = useState([]); // Estado para manejar el carrito
+  const [selectedProduct, setSelectedProduct] = useState(null); // Producto seleccionado para la interfaz desplegable
+  const [quantity, setQuantity] = useState(1); // Cantidad seleccionada por el usuario
+  const [modalVisible, setModalVisible] = useState(false); // Estado del modal
+  const [reseña, setReseña] = useState(null); // Almacena la reseña del producto
+  const data2 = route.params?.data2 || []; // Datos obtenidos del backend o vacíos por defecto
+
+  // Manejar la apertura del modal con los detalles del producto
+  const handleShowProductDetails = async(item) => {
+    setSelectedProduct(item); // Guardar el producto seleccionado
+    setQuantity(1); // Restablecer la cantidad inicial
+    setModalVisible(true); // Mostrar el modal
+    // Obtener una reseña aleatoria para el producto
+    try {
+      const response = await axios.get(`http://192.168.80.20:5000/api/resenas/${item.codigo}`);
+      const reseñas = response.data.resenas;
+      if (reseñas.length > 0) {
+        setReseña(reseñas[Math.floor(Math.random() * reseñas.length)]);
+      } else {
+        setReseña(null);
+      }
+    } catch (error) {
+      console.error('Error al obtener la reseña:', error);
+      setReseña(null);
+    }
+  };
+
+  // Confirmar y agregar el producto al carrito
+  const handleAddToCart = () => {
+    if (!selectedProduct) return;
+
+    setCart((prevCart) => {
+      // Verificar si el producto ya está en el carrito
+      const exists = prevCart.some((cartItem) => cartItem.codigo === selectedProduct.codigo);
+
+      if (exists) {
+        Alert.alert('Producto duplicado', `${selectedProduct.producto_nombre} ya está en el carrito.`);
+        return prevCart; // No se agrega si ya existe
+      }      
+
+      // Si no existe, lo agrega al carrito con la cantidad seleccionada
+      const productWithQuantity = { ...selectedProduct, cantidad: quantity };
+      Alert.alert('Producto añadido', `${selectedProduct.producto_nombre} se añadió al carrito con cantidad: ${quantity}.`);
+      return [...prevCart, productWithQuantity];
+    });
+    setModalVisible(false); // Cerrar el modal
+  };
+
+  // Navegar a la pantalla del carrito
+  const handleGoToCart = () => {
+    navigation.navigate('CartScreen', { cart }); // Pasar los datos del carrito a la pantalla CartScreen
+  };
+
+  // Incrementar la cantidad seleccionada
+  const increaseQuantity = () => {
+    if (quantity < selectedProduct.cantidadDisponible) {
+      setQuantity(quantity + 1);
+    }
+  };
+
+  // Decrementar la cantidad seleccionada
+  const decreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
+
+  const renderHeader = () => (
+    <View>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingHorizontal: 40 }]}>
         <TouchableOpacity style={styles.menuButton}>
           <Ionicons name="menu" size={24} color="#4CAF50" />
         </TouchableOpacity>
         <Text style={styles.title}>CULTIVO en RED</Text>
-        <TouchableOpacity style={styles.cartButton}>
-          <Ionicons name="cart-outline" size={24} color="#fff" style={styles.cartIcon} />
+        <TouchableOpacity style={styles.cartButton} onPress={handleGoToCart}>
+          <Ionicons name="cart-outline" size={24} color="#fff" />
+          {cart.length > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{cart.length}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -30,112 +98,166 @@ export default function HomeScreen({route, navigation}) {
         <Text>Envio Cliente</Text>
       </TouchableOpacity>
       {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <TextInput 
-          style={styles.searchInput} 
-          placeholder="Buscar..." 
-          placeholderTextColor="#4CAF50" 
+      <View style={[styles.searchContainer, { marginHorizontal: 40 }]}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar..."
+          placeholderTextColor="#4CAF50"
         />
         <TouchableOpacity style={styles.searchIcon}>
-          <Ionicons name="search" size={24} color="#4CAF50" onPress={handleSearch}/>
+          <Ionicons name="search" size={24} color="#4CAF50" />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={data2}
-        keyExtractor={(item) => item.codigo.toString()} // Asegúrate de que "codigo" sea único
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.nombre}</Text>
-            <Text>{item.descripcion || 'Sin descripción'}</Text>
-            <Text>
-              {item.precio ? `$${item.precio}` : 'Precio no disponible'}
-            </Text>
-          </View>
-        )}
-      />
+
       {/* Próximas Cosechas */}
       <View style={styles.section}>
         <Image
-          source={anuncio} // Uso de la constante anuncio para cargar la imagen
+          source={anuncio}
           style={{ width: 300, height: 139, marginHorizontal: 40 }}
         />
       </View>
-
+      <TouchableOpacity
+        onPress={() => navigation.navigate('EnviosCliente')}
+      >
+        <Text>Envio Cliente</Text>
+      </TouchableOpacity>
       {/* Categorías */}
       <View style={styles.categories}>
         <Text style={styles.sectionTitle}>Categorías</Text>
         <View style={styles.categoryList}>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={frutas} // Imagen local de frutas
-              style={styles.categoryImage} 
-            />
+            <Image source={frutas} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Frutas</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={verduras} // Imagen local de verduras
-              style={styles.categoryImage} 
-            />
+            <Image source={verduras} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Verduras</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.categoryButton}>
-            <Image 
-              source={plantas} // Imagen local de plantas
-              style={styles.categoryImage} 
-            />
+            <Image source={plantas} style={styles.categoryImage} />
             <Text style={styles.categoryText}>Plantas</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Productos */}
-      <View style={styles.products}>
-        <View style={styles.productCard}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/100' }} 
-            style={styles.productImage} 
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>Banano Maduro</Text>
-            <Text style={styles.productSubtitle}>Wilson Manduley</Text>
-            <Text style={styles.productLocation}>Vendido en El Tunal, Popayán</Text>
-          </View>
-        </View>
-        <View style={styles.productCard}>
-          <Image 
-            source={{ uri: 'https://via.placeholder.com/100' }} 
-            style={styles.productImage} 
-          />
-          <View style={styles.productInfo}>
-            <Text style={styles.productTitle}>Tomate Chonto</Text>
-            <Text style={styles.productSubtitle}>Catalina Ceballos</Text>
-            <Text style={styles.productLocation}>Tiendas, Cauca</Text>
-          </View>
-        </View>
+      {/* Título de productos */}
+      <View style={styles.productsSection}>
+        <Text style={styles.sectionTitle}>Productos Disponibles</Text>
       </View>
-    </ScrollView>
+    </View>
+  );
+
+  return (
+    <>
+      <FlatList
+        data={data2}
+        keyExtractor={(item) => item.codigo.toString()}
+        ListHeaderComponent={renderHeader}
+        renderItem={({ item }) => (
+          <View style={styles.productCard}>
+            <View style={styles.productHeader}>
+              <Text style={styles.productTitle}>{item.producto_nombre}</Text>
+              <TouchableOpacity onPress={() => handleShowProductDetails(item)}>
+                <Ionicons name="cart" size={20} color="#4CAF50" style={styles.cartIcon} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.productSubtitle}>
+              {item.agricultor_nombre || 'Desconocido'}
+            </Text>
+            <View style={styles.locationContainer}>
+              <Ionicons name="location-outline" size={16} color="#4CAF50" style={styles.locationIcon} />
+              <Text style={styles.productLocation}>
+                {item.direccion || 'No especificada'}
+              </Text>
+            </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceText}>${item.precio || '0'}</Text>
+            </View>
+          </View>
+        )}
+        contentContainerStyle={styles.productsContainer}
+        ListEmptyComponent={
+          <Text style={styles.noProducts}>No hay productos disponibles.</Text>
+        }
+      />
+
+      {/* Modal para agregar al carrito */}
+      {selectedProduct && (
+        <Modal visible={modalVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <ScrollView contentContainerStyle={styles.modalContent}>
+              <Text style={styles.modalTitle}>{selectedProduct.producto_nombre}</Text>
+              <Text style={styles.modalText}>Descripción: {selectedProduct.descripcion}</Text>
+              <Text style={styles.modalText}>Agricultor: {selectedProduct.agricultor_nombre}</Text>
+              <Text style={styles.modalText}>Ubicación: {selectedProduct.direccion}</Text>
+
+              <View style={styles.quantityContainer}>
+                <TouchableOpacity onPress={decreaseQuantity}>
+                  <Ionicons name="remove-circle-outline" size={24} color="#4CAF50" />
+                </TouchableOpacity>
+                <Text style={styles.quantityText}>{quantity}</Text>
+                <TouchableOpacity onPress={increaseQuantity}>
+                  <Ionicons name="add-circle-outline" size={24} color="#4CAF50" />
+                </TouchableOpacity>
+              </View>
+
+              <Text style={styles.priceText}>Precio Kilo: ${selectedProduct.precio}</Text>
+
+               {/* Mostrar la reseña */}
+               {reseña ? (
+                <View style={styles.reviewCard}>
+                  <Text style={styles.reviewTitle}>Reseñas:</Text>
+                  <Text style={styles.clientName}>{reseña.cliente}</Text>
+                  <Text style={styles.comment}>{reseña.comentario}</Text>
+                  <Text style={styles.stars}>{'★'.repeat(reseña.numero_estrellas)}</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate('ReviewScreen', { codigo_producto: selectedProduct.codigo })}>
+                    <Ionicons name="arrow-forward-circle" size={30} color="#4CAF50" />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <Text>No hay reseñas para este producto.</Text>
+              )}
+
+
+              <TouchableOpacity
+                style={styles.addToCartButton}
+                onPress={handleAddToCart}
+              >
+                <Text style={styles.addToCartText}>Agregar al carrito</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </Modal>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  // ... estilos existentes
   container: {
     flex: 1,
-    backgroundColor: '#f4f6ff', // Fondo modificado
+    backgroundColor: '#f4f6ff',
   },
   header: {
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    elevation: 2, // Agrega una ligera sombra
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#4CAF50',
     textAlign: 'center',
-    flex: 1, // Esto permite que el título tome todo el espacio disponible entre los botones
+    flex: 1,
   },
   menuButton: {
     padding: 10,
@@ -145,8 +267,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#4CAF50',
   },
-  cartIcon: {
-    color: '#fff',
+  cartBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -186,56 +321,190 @@ const styles = StyleSheet.create({
   },
   categoryButton: {
     alignItems: 'center',
-    backgroundColor: '#fff', // Fondo blanco para los botones
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 10,
-    width: 90, // Ancho del botón
-    height: 110, // Altura del botón
-    elevation: 3, // Sombra para dar efecto de recuadro
+    width: 90,
+    height: 110,
+    elevation: 3,
   },
   categoryImage: {
     width: 50,
     height: 50,
-    borderRadius: 25, // Hace las imágenes circulares
+    borderRadius: 25,
     marginBottom: 5,
   },
   categoryText: {
     fontSize: 14,
     color: '#333',
   },
-  products: {
+  productsSection: {
     paddingHorizontal: 20,
     marginTop: 20,
   },
+  productsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   productCard: {
-    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
+    padding: 15,
+    marginBottom: 15,
+    width: '95%',
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
   },
-  productImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
-  productInfo: {
-    marginLeft: 10,
-    flex: 1,
-    justifyContent: 'center',
+  productHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
   },
   productTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#4CAF50',
   },
   productSubtitle: {
     fontSize: 14,
     color: '#555',
+    marginBottom: 5,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationIcon: {
+    marginRight: 5,
   },
   productLocation: {
     fontSize: 12,
     color: '#888',
+  },
+  cartIcon: {
+    padding: 5,
+    borderRadius: 20,
+    backgroundColor: '#f4f6ff',
+  },
+  priceContainer: {
+    marginTop: 5,
+    alignItems: 'flex-end',
+  },
+  priceText: {
+    fontSize: 16, // Aumenta el tamaño de la fuente
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  noProducts: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
+    marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20, // Bordes redondeados en la parte superior
+    borderTopRightRadius: 20,
+    padding: 20,
+    width: '100%', // Asegura que ocupe todo el ancho
+    height: '50%', // Ajusta la altura del modal para que esté bien alineado
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+  },
+  quantityText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 20,
+  },
+  addToCartButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  addToCartText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  reviewsContainer: {
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#f4f4f4',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '90%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginBottom: 10,
+  },
+  reviewCard: {
+    backgroundColor: '#5ba73b',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  clientName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  comment: {
+    fontSize: 14,
+    color: '#fff',
+    marginVertical: 5,
+  },
+  stars: {
+    fontSize: 16,
+    color: '#FFD700',
+  },
+  addToCartButton: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  addToCartText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
